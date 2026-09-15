@@ -1,0 +1,289 @@
+<title>旅インターンと街歩き</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#EEEFE9; --sheet:#FAFAF6;
+    --ink:#191C17; --ink-2:#5C6158; --ink-3:#8A8F84;
+    --rule:#D2D5CA; --rule-hard:#B4B9AB;
+    --accent:#255541; --accent-soft:#DCE7DF;
+    --flag:#8C3320; --flag-soft:#F0DFD9;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#14170F; --sheet:#1C1F18;
+      --ink:#E9EBE2; --ink-2:#A2A897; --ink-3:#787E6E;
+      --rule:#333827; --rule-hard:#4A5039;
+      --accent:#86BFA0; --accent-soft:#22301F;
+      --flag:#DE8A6E; --flag-soft:#33201A;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#14170F; --sheet:#1C1F18;
+    --ink:#E9EBE2; --ink-2:#A2A897; --ink-3:#787E6E;
+    --rule:#333827; --rule-hard:#4A5039;
+    --accent:#86BFA0; --accent-soft:#22301F;
+    --flag:#DE8A6E; --flag-soft:#33201A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Zen Kaku Gothic New","Noto Sans JP",system-ui,sans-serif;
+    font-size:15px;line-height:1.9;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:960px;margin:0 auto;padding-inline:20px;padding-block:52px 96px;}
+  h1,h2,h3,h4{font-family:"Zen Old Mincho",serif;text-wrap:balance;margin:0;line-height:1.4;}
+  p{margin:0;}
+
+  .eyebrow{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:10px 20px;
+    padding-bottom:14px;border-bottom:1px solid var(--rule-hard);}
+  h1{font-size:clamp(30px,6.4vw,50px);font-weight:900;margin-top:26px;letter-spacing:.02em;}
+  .sub{font-family:"Zen Old Mincho",serif;font-size:clamp(15px,2.4vw,18px);color:var(--ink-2);margin-top:12px;}
+  .lede{max-width:64ch;margin-top:26px;display:flex;flex-direction:column;gap:14px;}
+  .lede strong{background:var(--accent-soft);font-weight:700;padding:0 .25em;}
+
+  section{margin-top:58px;}
+  .sec-head{display:flex;align-items:baseline;gap:14px;border-bottom:2px solid var(--ink);padding-bottom:8px;}
+  .sec-no{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;color:var(--accent);letter-spacing:.1em;font-weight:600;}
+  .sec-head h2{font-size:clamp(19px,3.4vw,25px);font-weight:700;}
+  .sec-note{margin-top:16px;max-width:64ch;color:var(--ink-2);}
+  h3.sub-h{font-size:clamp(17px,3vw,20px);font-weight:700;margin-top:38px;padding-left:12px;border-left:3px solid var(--accent);}
+  .body-p{margin-top:14px;max-width:64ch;}
+  .body-p + .body-p{margin-top:12px;}
+  b.hl{background:var(--accent-soft);padding:0 .2em;}
+
+  /* 三者の非対称 */
+  .three{margin-top:20px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;
+    background:var(--rule);border:1px solid var(--rule);}
+  @media(max-width:700px){.three{grid-template-columns:1fr;}}
+  .three > div{background:var(--sheet);padding:16px 16px 14px;}
+  .three .who{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3);}
+  .three h4{font-size:16px;font-weight:700;margin-top:4px;}
+  .three .gives{margin-top:10px;font-size:13.5px;line-height:1.7;}
+  .three .gives em{font-style:normal;color:var(--accent);font-weight:700;}
+  .three .gets{margin-top:8px;font-size:13px;color:var(--ink-2);line-height:1.7;}
+
+  /* 数字表 */
+  .tablewrap{margin-top:18px;overflow-x:auto;border:1px solid var(--rule);}
+  table{border-collapse:collapse;width:100%;min-width:480px;background:var(--sheet);}
+  caption{caption-side:top;text-align:left;font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);padding:12px 14px 10px;}
+  th,td{border-top:1px solid var(--rule);padding:9px 14px;text-align:left;font-size:13.5px;vertical-align:top;}
+  thead th{border-top:none;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:10.5px;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:500;}
+  td.n,th.n{text-align:right;font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  tr.total td{border-top:2px solid var(--ink);font-weight:700;}
+  tr.total td.n{color:var(--accent);}
+  .tnote{margin-top:8px;font-size:12.5px;color:var(--ink-3);}
+
+  ul.plain{margin:14px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px;max-width:64ch;}
+  ul.plain li{display:grid;grid-template-columns:auto 1fr;gap:12px;font-size:14px;}
+  ul.plain li::before{content:"—";color:var(--accent);font-family:"IBM Plex Mono",ui-monospace,monospace;}
+
+  .metrics{margin-top:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;}
+  .metrics > div{border-top:3px solid var(--accent);padding-top:12px;}
+  .metrics h4{font-size:15px;font-weight:700;}
+  .metrics .num{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;color:var(--accent);margin-top:4px;}
+  .metrics p{margin-top:8px;font-size:13.5px;color:var(--ink-2);}
+
+  .warn{margin-top:20px;border:1px solid var(--flag);background:var(--flag-soft);padding:18px 20px;max-width:70ch;}
+  .warn h4{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;letter-spacing:.1em;
+    color:var(--flag);margin-bottom:8px;}
+  .warn p{font-size:13.5px;line-height:1.8;}
+  .warn p + p{margin-top:9px;}
+
+  .phase{margin-top:20px;display:grid;gap:2px;background:var(--rule);border:1px solid var(--rule);}
+  .phase > div{background:var(--sheet);padding:15px 18px;display:grid;grid-template-columns:minmax(0,12ch) 1fr;gap:4px 20px;}
+  .phase .k{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.1em;color:var(--accent);padding-top:4px;}
+  .phase .k.kill{color:var(--flag);}
+  .phase .v{max-width:60ch;font-size:14px;}
+
+  .arith{margin-top:18px;border-left:3px solid var(--flag);padding:6px 0 6px 18px;max-width:62ch;}
+  .arith p{font-size:14px;}
+  .arith .calc{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13.5px;
+    font-variant-numeric:tabular-nums;color:var(--ink);margin-top:8px;line-height:1.9;}
+
+  .engine{margin-top:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;}
+  .engine > div{background:var(--sheet);border:1px solid var(--rule);padding:15px 16px;}
+  .engine .step{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.14em;color:var(--ink-3);}
+  .engine h4{font-size:15px;font-weight:700;margin-top:4px;}
+  .engine p{margin-top:8px;font-size:13.5px;color:var(--ink-2);}
+
+  .cal{margin-top:20px;}
+  .cal > div{display:grid;grid-template-columns:minmax(0,11ch) 1fr;gap:6px 20px;padding-block:14px;border-bottom:1px dashed var(--rule);}
+  .cal .when{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;color:var(--flag);letter-spacing:.06em;padding-top:3px;}
+  .cal .what{max-width:62ch;}
+  .cal .what b{font-weight:700;}
+  .cal .what span{display:block;color:var(--ink-2);font-size:13.5px;margin-top:2px;}
+  @media(max-width:640px){.cal > div,.phase > div{grid-template-columns:1fr;}}
+
+  .caveat{margin-top:44px;border:1px solid var(--rule-hard);background:var(--sheet);padding:20px 22px;
+    font-size:13.5px;color:var(--ink-2);max-width:72ch;}
+  .caveat h4{font-size:13.5px;color:var(--ink);margin-bottom:8px;
+    font-family:"IBM Plex Mono",ui-monospace,monospace;letter-spacing:.08em;}
+  .closing{margin-top:40px;padding-top:26px;border-top:2px solid var(--ink);max-width:62ch;
+    font-family:"Zen Old Mincho",serif;font-size:16px;line-height:2;}
+  footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--rule);
+    font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;color:var(--ink-3);letter-spacing:.06em;line-height:2;}
+</style>
+
+<div class="wrap">
+
+  <div class="eyebrow"><span>事業設計</span><span>2026.09.15</span><span>社内検討用</span></div>
+
+  <h1>旅インターンと<br>街歩き</h1>
+  <p class="sub">やると決めた2本を、協賛と単価の算数まで落とす</p>
+
+  <div class="lede">
+    <p>2本とも、これまでのノートの分類でいえば「身体性」の側にある。学生を地域に送り込むことも、人と歩いて聴くことも、AIが肩代わりできない。問題は価値ではなく<strong>算数</strong>で、どちらも素直に作ると赤字になる構造を最初から抱えている。そこを先に書く。</p>
+    <p>結論を先に言うと、旅インターンは<strong>協賛と呼ぶのをやめて採用の科目で売る</strong>。街歩きは<strong>街歩きを売らず、歩いて作った記録を売る</strong>。一般向けの回は商品ではなく、素材とショーケースを生むエンジンとして残す。</p>
+  </div>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">A</span><h2>旅インターン（学生の武者修行）</h2></div>
+
+    <h3 class="sub-h">A-1　何を売っているのか</h3>
+    <p class="body-p">学生を2〜4週間、地域の事業者に住み込みで送る。ここまではよくある地域インターンだが、決定的に違う点を1つだけ入れる。<b class="hl">学生は必ず成果物を1つ納めて帰る</b>。ヒトマップの得意領域、つまり聴き書き・記録・地図に限定する。これが受入事業者にとっての対価になり、協賛企業にとっての説明材料になり、学生にとっての作品になる。体験だけを持ち帰らせると、三者の誰に対しても請求書が書けない。</p>
+    <p class="body-p">売り物は「学生の労働力」でも「感動体験」でもなく、<b class="hl">2週間で地域に入り、人に会い、記録を作って帰ってくる学生という存在そのもの</b>だ。企業がそこに払う理由は3つあり、金額が違う。</p>
+    <ul class="plain">
+      <li><b>採用接点（最大）</b>：新卒採用の単価は1人あたり百万円規模。地方志向で行動力のある学生と2週間も接触できる機会は、合同説明会にはない。</li>
+      <li><b>自社若手の研修枠</b>：協賛社から社員1名を引率・伴走役として送ってもらう。これは研修費で、しかも協賛より稟議が通りやすい。盲点だが、いちばん筋がいい。</li>
+      <li><b>広報・地域共生</b>：金額は最も小さく、担当が代わると消える。主目的にはしない。</li>
+    </ul>
+    <p class="body-p">だから対外的には「協賛のお願い」と言わない。<b class="hl">採用接点と若手研修がセットになった共同プログラム</b>として持っていく。同じ内容でも、広報費の科目に落ちた瞬間に金額が一桁下がる。前のノートに書いた「相手の科目が値段を決める」がそのまま効く場所だ。</p>
+
+    <h3 class="sub-h">A-2　三者が出すものは、それぞれ違う</h3>
+    <div class="three">
+      <div>
+        <div class="who">学生</div><h4>時間と身体を出す</h4>
+        <p class="gives">出すもの：<em>2〜4週間</em>と、記録を作る労力。</p>
+        <p class="gets">受け取る：旅費と宿と奨励金（自己負担をほぼゼロに）、現場、作品、企業との接点。参加費は少額でも取る——無料にすると本気度が落ち、受入先に迷惑がかかる。</p>
+      </div>
+      <div>
+        <div class="who">受入事業者</div><h4>現場を出す</h4>
+        <p class="gives">出すもの：<em>宿・食・仕事の現場</em>。現金は出さない（出せない）。</p>
+        <p class="gets">受け取る：自分の仕事の記録、若い人の目線、次の担い手候補との接点。ここから金を取ろうとした瞬間、この事業は成立しなくなる。</p>
+      </div>
+      <div>
+        <div class="who">協賛企業</div><h4>金を出す</h4>
+        <p class="gives">出すもの：<em>プログラム費</em>（採用費・研修費の科目）。</p>
+        <p class="gets">受け取る：学生との2週間の接点、社員1名の実地研修、記録物の二次利用権、報告会。</p>
+      </div>
+    </div>
+    <p class="body-p">この非対称が事業の骨格だ。現金を出せるのは1者しかいないのに、価値は3者に配られる。だから<b class="hl">企業に売る対価を、学生と受入事業者から取らない形で用意できるか</b>がすべての設計になる。上の表の「受け取る」欄が、そのまま営業資料になる。</p>
+
+    <h3 class="sub-h">A-3　1期あたりの算数</h3>
+    <div class="tablewrap">
+      <table>
+        <caption>1期＝学生6名 / 2週間 / 1地域（すべて仮説値）</caption>
+        <thead><tr><th>項目</th><th class="n">金額</th><th>内訳の考え方</th></tr></thead>
+        <tbody>
+          <tr><td>学生の旅費・保険・食費補助</td><td class="n">36万円</td><td>6名 × 6万円。自己負担をほぼゼロにする分。</td></tr>
+          <tr><td>現地コーディネート・伴走</td><td class="n">40万円</td><td>受入先の開拓、事前面談、期間中の巡回。実質これが人件費。</td></tr>
+          <tr><td>記録物の制作・印刷</td><td class="n">15万円</td><td>成果物を形にする費用。協賛社への納品物でもある。</td></tr>
+          <tr><td>保険・雑費・予備</td><td class="n">9万円</td><td>傷害保険、緊急時の移動費。</td></tr>
+          <tr class="total"><td>原価</td><td class="n">100万円</td><td>学生6名を2週間動かす最低ライン。</td></tr>
+          <tr><td>協賛（採用枠つき）</td><td class="n">100万円</td><td>1社。接点・社員1名の伴走枠・報告会・二次利用権。</td></tr>
+          <tr><td>協賛（一般枠）</td><td class="n">80万円</td><td>2社 × 40万円。記録物と報告会まで。</td></tr>
+          <tr><td>学生参加費</td><td class="n">18万円</td><td>6名 × 3万円。本気度のフィルタとして取る。</td></tr>
+          <tr class="total"><td>収入</td><td class="n">198万円</td><td>粗利 約98万円／期。</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="tnote">※ 数字はすべて設計上の仮説。検証はフェーズ0の請求書でしか行えない。</p>
+    <p class="body-p">ここで正直に言っておきたいことが1つある。<b class="hl">年4期回しても粗利400万円弱で、これ単体では食えない</b>。人手も足りない。だから旅インターンは、最初から2階建てで考える。1階が協賛で回る本体、2階が<b>協賛企業への追加販売</b>——若手研修の引率枠を人数分で売る、記録物を社内報・採用パンフに使う権利を売る、翌年の単独開催を売る。1階で信用を作り、2階で利益を出す。1階だけを見て「儲からないから縮小」と判断しないための線引きを、先に引いておく。</p>
+
+    <h3 class="sub-h">A-4　協力隊コーディネートに繋げるために、今から取る数字</h3>
+    <p class="body-p">3年後に自治体へ協力隊のコーディネートを提案するとき、効く実績は「何人参加しました」ではない。協力隊制度が現場で壊れる理由は昔から2つに絞られている。<b class="hl">ミスマッチと孤立</b>だ。だから旅インターンで示すべきなのは、動員数ではなく<b>マッチングの精度と、伴走の型を持っていること</b>になる。初回から次の3つだけを記録する。</p>
+    <div class="metrics">
+      <div><h4>受入先の再依頼率</h4><div class="num">目標 70%以上</div><p>翌年また受け入れたいと言うか。現場が満足していない事業に、自治体は3年を預けない。</p></div>
+      <div><h4>学生の再訪・継続率</h4><div class="num">目標 30%以上</div><p>終了後6ヶ月で再訪または連絡が続いた割合。協力隊の定着率の代理指標になる。</p></div>
+      <div><h4>中断・トラブル件数</h4><div class="num">目標 ゼロ、全件記録</div><p>起きた事実と対処をすべて残す。ゼロを誇るより、起きたときの型を持っているほうが信用される。</p></div>
+    </div>
+    <p class="body-p">この3つを2年分揃えたものが、自治体に出す唯一の資料になる。逆に言えば、今これを取らずに規模だけ追うと、3年後に手ぶらになる。</p>
+
+    <div class="warn">
+      <h4>先に潰しておく論点</h4>
+      <p><b>①労働者性。</b>学生に成果物を作らせる以上、「無給の体験」という建て付けは危うい。指揮命令があり、受入先の利益になる作業をさせれば労働とみなされ得る。対策は単純で、<b>奨励金を出して無給にしないこと</b>。協賛から出す旅費・食費補助・奨励金を、最初から原価に積んである理由がこれ。受入先の作業を手伝う時間と、記録を作る時間の線引きも、事前に文書で決めておく。</p>
+      <p><b>②住み込みの安全。</b>1対1で寝泊まりする設計は作らない。傷害保険は必須、緊急連絡先は受入先とこちらの二重、巡回を期間中に最低2回。ハラスメントの申告窓口を受入先の外（こちら側）に置くことを、学生にも受入先にも先に伝える。</p>
+      <p><b>③1期目を欲張らない。</b>6名は2期目以降。1期目は3名で、全員の面談と巡回を自分でやる。</p>
+    </div>
+
+    <div class="phase">
+      <div><div class="k">フェーズ0</div><div class="v">1地域・学生3名・2週間・協賛1社。受入先は既に関係のある事業者に限る。新規開拓は2期目から。</div></div>
+      <div><div class="k">売る順番</div><div class="v">学生募集より先に、協賛1社を口頭で取る。企業がつかない企画は、学生を集めてから中止するのが最悪の失敗になる。</div></div>
+      <div><div class="k">検証点</div><div class="v">企業の請求書が「採用費または研修費」で通るか。広報費で処理されたら、値段は次回上がらない。</div></div>
+      <div><div class="k kill">キル基準</div><div class="v">協賛1社目が3ヶ月で取れない。または受入先が翌年の受け入れを断る。どちらかが起きたら、規模を広げず設計をやり直す。</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">B</span><h2>ヒトマップの街歩き</h2></div>
+
+    <h3 class="sub-h">B-1　まず、街歩きを売っても事業にならない理由</h3>
+    <p class="body-p">真剣に考えるとは、まずこの算数を直視することだと思う。</p>
+    <div class="arith">
+      <p>一般向けの街歩きを、常識的な条件で回した場合：</p>
+      <p class="calc">参加費 3,000円 × 10名 ＝ 30,000円／回<br>準備・下見・当日・記録 ＝ 実働およそ10時間<br>→ 時給換算 3,000円（経費を引く前）</p>
+      <p style="margin-top:10px;">悪くない数字に見えるが、これは<b>歩いた回数しか売上が立たない</b>ということでもある。人数を20名に増やせば体験の質が落ち、回数を増やせば自分の時間が先に尽きる。街歩きを商品として売るかぎり、上限は「小田太志が歩ける回数」で固定される。</p>
+    </div>
+    <p class="body-p">だから設計を変える。<b class="hl">街歩きを売るのをやめ、歩いて作った記録を売る。</b>歩くこと自体は変えない。変えるのは、誰に何を請求するかだけだ。これは前のノートで20案に通した考え方と同じで、街歩きはむしろその典型例になる。</p>
+
+    <h3 class="sub-h">B-2　記録を買う相手は、すでに予算を持っている</h3>
+    <ul class="plain">
+      <li><b>不動産デベロッパー・再開発の事業者</b>：再開発では住民の合意形成と地域理解が必須で、そこには予算が付く。地権者や古くからの住民の語りを、反対運動になる前に聴いて記録しておく価値は、彼らがいちばんよく知っている。歩いて聴ける人間は、ほとんどいない。</li>
+      <li><b>鉄道・バス事業者、商業施設</b>：沿線価値・館の文脈づくり。広告代理店が作る「街のストーリー」は取材が浅く、現場では使えないことが多い。</li>
+      <li><b>地方銀行・信用金庫</b>：地域ブランディングと、取引先の事業承継支援。相続前の聴き書き（補遺IIのL6）と同じ窓口に繋がる。</li>
+      <li><b>企業研修</b>：街歩きを「観察のトレーニング」として売る。新人研修、商品開発部門、デザイン部門。中身は一般回とほぼ同じで、単価だけが変わる。</li>
+    </ul>
+    <p class="body-p">単価の感覚だけ書いておくと、一般回30,000円に対し、<b class="hl">法人の貸切・研修で10〜30万円、記録物の制作案件で数十万〜数百万円</b>（いずれも仮説）。同じ一日を、誰の科目で売るかだけの違いになる。</p>
+
+    <h3 class="sub-h">B-3　では一般向けの回はやめるのか——やめない</h3>
+    <p class="body-p">やめてはいけない。ただし<b class="hl">商品ではなくエンジンとして位置づける</b>。一般回そのものは、ほぼトントンで構わない。そこから3つが出てくる。</p>
+    <div class="engine">
+      <div><div class="step">産出 01</div><h4>素材が毎回たまる</h4><p>歩くたびに語りと写真と地図が増える。これが法人案件の在庫になる。取材してから売るのではなく、売る前にもう持っている状態を作る。</p></div>
+      <div><div class="step">産出 02</div><h4>ショーケースになる</h4><p>法人は体験しないと発注できない。担当者を一般回に呼べる状態が、そのまま営業になる。提案書より速い。</p></div>
+      <div><div class="step">産出 03</div><h4>歩き手が育つ</h4><p>旅インターンの学生を記録スタッフとして入れる。属人性を外す唯一の道で、2つの事業がここで繋がる。</p></div>
+    </div>
+    <p class="body-p">価格は下げない。一般回は<b>2,500〜3,500円を維持し、無料にはしない</b>。無料にすると客層が暇つぶしに寄り、法人客に見せるショーケースとして機能しなくなる。むしろ少人数・高単価の回（1回8名まで、5,000円）を月1本だけ混ぜて、法人の担当者にはそちらを見せる。</p>
+
+    <div class="phase">
+      <div><div class="k">フェーズ0</div><div class="v">法人1社に、貸切1回を有料で売る（研修でも視察でも可）。並行して一般回を3回やり、その素材で記録物を1本だけ作る。</div></div>
+      <div><div class="k">次の1手</div><div class="v">その記録物を持って、再開発中のエリアのデベロッパーか、地元の地銀に1件だけ当たる。企画書は作らず、現物を持っていく。</div></div>
+      <div><div class="k">検証点</div><div class="v">法人が「面白い」ではなく「うちのこの予算で買える」と言うか。科目の名前が相手の口から出たら本物。</div></div>
+      <div><div class="k kill">キル基準</div><div class="v">貸切1件目が3ヶ月で売れない。または記録物を見せた法人2社が、予算科目を1つも挙げられない。</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">C</span><h2>2本は、同じ資産を共有している</h2></div>
+    <p class="sec-note">別々に走らせると、どちらも人手で潰れる。同じ資産を使い回す前提で組むと、片方の副産物がもう片方の原価を下げる。</p>
+    <ul class="plain">
+      <li><b>学生 →　街歩きの記録スタッフ。</b>旅インターンで訓練した学生が、街歩きの記録を担う。属人性を外す唯一の現実的な道。</li>
+      <li><b>街歩きの法人客 →　旅インターンの協賛企業。</b>すでに一度金を払い、現場を見た企業に次を売るほうが、新規開拓より桁で速い。順番としては<b>街歩きの法人案件が先</b>でもいい。</li>
+      <li><b>受入事業者 →　街歩きの語り手。</b>旅インターンで関係のできた事業者は、そのまま記録の対象になる。取材先の開拓コストが消える。</li>
+      <li><b>記録物 →　両方の営業資料。</b>作るものは1種類でいい。協賛企業への納品物と、法人への提案物を、別々に作らない。</li>
+    </ul>
+
+    <div class="cal">
+      <div><div class="when">〜10月</div><div class="what"><b>街歩きの法人1件を売りに行く</b><span>先に現金が立つのはこちら。一般回を3回やり、素材を溜めながら、知り合い経由で貸切を1件取る。旅インターンはまだ動かさない。</span></div></div>
+      <div><div class="when">〜11月</div><div class="what"><b>旅インターンの協賛1社を、口頭で取る</b><span>学生募集より先。街歩きの貸切を買った企業が第一候補。持っていくのは企画書ではなく、記録物の現物と、採用接点・若手研修の枠組み。</span></div></div>
+      <div><div class="when">〜12月</div><div class="what"><b>受入事業者2件と、条件を文書で固める</b><span>宿・食・作業の線引き、保険、緊急連絡、成果物の内容。ここを口約束で進めると、1期目に必ず事故が起きる。</span></div></div>
+      <div><div class="when">2〜3月</div><div class="what"><b>1期目を3名で実施</b><span>春休み。全員の事前面談と期間中の巡回2回を自分でやる。3つの数字（再依頼率・再訪率・トラブル記録）を初回から取る。</span></div></div>
+      <div><div class="when">4月</div><div class="what"><b>協賛社への報告会と、2階の提案</b><span>記録物の納品と同時に、翌年の単独開催・若手研修の引率枠を提案する。ここが利益の出る場所。</span></div></div>
+    </div>
+  </section>
+
+  <div class="caveat">
+    <h4>数字の扱いについて</h4>
+    <p>このノートの金額・比率・目標値は<b>すべて設計上の仮説</b>で、一次ソースはない。協賛単価も、記録物の相場も、再依頼率の目標も、1件目の請求書と1期目の実績でしか検証できない。対外資料に転用する際は、8/26ノートの引用値（有効求人倍率など）と必ず分けて書くこと。</p>
+  </div>
+
+  <p class="closing">2本とも、いちばん危ないのは「学生も地域も喜んでいるのに、誰も請求書を受け取っていない」状態で1年が過ぎることだ。順番を間違えなければそれは避けられる。企業を1社、口頭でいいから先に取る。歩く前に、買う人を決める。</p>
+
+  <footer>
+    事業設計 / 2026.09.15 / 社内検討用・対外未提出<br>
+    関連：08.26「AIが速くなるほど、人間は遅い場所で稼ぐ」／補遺「誰が請求書を受け取るのか」／補遺II「十の反転」
+  </footer>
+</div>
