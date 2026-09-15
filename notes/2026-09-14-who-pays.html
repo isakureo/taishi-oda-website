@@ -1,0 +1,393 @@
+<title>誰が請求書を受け取るのか</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#EEEFE9;
+    --sheet:#FAFAF6;
+    --ink:#191C17;
+    --ink-2:#5C6158;
+    --ink-3:#8A8F84;
+    --rule:#D2D5CA;
+    --rule-hard:#B4B9AB;
+    --accent:#255541;
+    --accent-soft:#DCE7DF;
+    --flag:#8C3320;
+    --flag-soft:#F0DFD9;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#14170F;
+      --sheet:#1C1F18;
+      --ink:#E9EBE2;
+      --ink-2:#A2A897;
+      --ink-3:#787E6E;
+      --rule:#333827;
+      --rule-hard:#4A5039;
+      --accent:#86BFA0;
+      --accent-soft:#22301F;
+      --flag:#DE8A6E;
+      --flag-soft:#33201A;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#14170F;
+    --sheet:#1C1F18;
+    --ink:#E9EBE2;
+    --ink-2:#A2A897;
+    --ink-3:#787E6E;
+    --rule:#333827;
+    --rule-hard:#4A5039;
+    --accent:#86BFA0;
+    --accent-soft:#22301F;
+    --flag:#DE8A6E;
+    --flag-soft:#33201A;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Zen Kaku Gothic New","Noto Sans JP",system-ui,sans-serif;
+    font-size:15px;
+    line-height:1.9;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:940px;
+    margin:0 auto;
+    padding-inline:20px;
+    padding-block:56px 96px;
+  }
+  h1,h2,h3,h4{font-family:"Zen Old Mincho",serif;text-wrap:balance;margin:0;line-height:1.4;}
+  p{margin:0;}
+  .mono{font-family:"IBM Plex Mono","IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;}
+
+  /* ---- masthead ---- */
+  .eyebrow{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-3);
+    display:flex;flex-wrap:wrap;gap:10px 20px;
+    padding-bottom:14px;border-bottom:1px solid var(--rule-hard);
+  }
+  h1{font-size:clamp(30px,6.4vw,50px);font-weight:900;margin-top:28px;letter-spacing:.01em;}
+  .sub{
+    font-family:"Zen Old Mincho",serif;font-size:clamp(15px,2.4vw,18px);
+    color:var(--ink-2);margin-top:14px;
+  }
+  .lede{max-width:62ch;margin-top:26px;display:flex;flex-direction:column;gap:16px;}
+  .lede strong{background:var(--accent-soft);font-weight:700;padding:0 .25em;}
+
+  /* ---- sections ---- */
+  section{margin-top:64px;}
+  .sec-head{display:flex;align-items:baseline;gap:14px;border-bottom:2px solid var(--ink);padding-bottom:8px;}
+  .sec-no{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;color:var(--accent);letter-spacing:.1em;font-weight:600;}
+  .sec-head h2{font-size:clamp(20px,3.6vw,26px);font-weight:700;}
+  .sec-note{margin-top:18px;max-width:62ch;color:var(--ink-2);}
+
+  /* ---- premise list ---- */
+  .premise{margin-top:26px;display:grid;gap:2px;background:var(--rule);border:1px solid var(--rule);}
+  .premise > div{background:var(--sheet);padding:18px 20px;display:grid;grid-template-columns:minmax(0,15ch) 1fr;gap:4px 22px;}
+  .premise dt,.premise .k{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;letter-spacing:.08em;
+    color:var(--flag);text-transform:uppercase;padding-top:4px;
+  }
+  .premise .v{max-width:58ch;}
+  @media(max-width:640px){.premise > div{grid-template-columns:1fr;}}
+
+  /* ---- payer tiers ---- */
+  .tiers{margin-top:26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;}
+  .tier{border-top:3px solid var(--accent);padding-top:14px;}
+  .tier h3{font-size:17px;font-weight:700;}
+  .tier .amt{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;color:var(--accent);letter-spacing:.06em;margin-top:6px;}
+  .tier p{margin-top:10px;color:var(--ink-2);font-size:14px;}
+
+  /* ---- ledger records ---- */
+  .ledger{margin-top:8px;}
+  .rec{border-bottom:1px solid var(--rule);padding-block:30px;}
+  .rec:first-of-type{border-top:1px solid var(--rule-hard);}
+  .rec-top{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap;}
+  .rec-no{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;font-weight:600;
+    color:var(--ink-3);padding-top:4px;
+  }
+  .rec-top h3{font-size:clamp(18px,3vw,22px);font-weight:700;flex:1 1 16ch;}
+  .swap{
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+    font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;letter-spacing:.04em;
+  }
+  .swap .old{color:var(--ink-3);text-decoration:line-through;text-decoration-thickness:1px;}
+  .swap .arrow{color:var(--ink-3);}
+  .swap .new{color:var(--accent);background:var(--accent-soft);padding:2px 8px;font-weight:600;}
+  .rec-why{margin-top:14px;max-width:62ch;color:var(--ink-2);}
+  .fields{margin-top:18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 34px;}
+  @media(max-width:720px){.fields{grid-template-columns:1fr;}}
+  .f{display:flex;flex-direction:column;gap:4px;}
+  .f .k{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3);
+  }
+  .f .v{font-size:14px;line-height:1.8;}
+  .f.money .v{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:13.5px;}
+  .f.kill .k{color:var(--flag);}
+  .f.kill .v{border-left:2px solid var(--flag);padding-left:12px;background:var(--flag-soft);padding-block:6px;padding-right:10px;}
+
+  /* ---- rules ---- */
+  .rules{margin-top:26px;counter-reset:r;display:flex;flex-direction:column;gap:0;}
+  .rules li{
+    list-style:none;counter-increment:r;
+    display:grid;grid-template-columns:auto 1fr;gap:18px;
+    padding-block:16px;border-bottom:1px dashed var(--rule);
+  }
+  .rules li::before{
+    content:counter(r,decimal-leading-zero);
+    font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;font-weight:600;
+    color:var(--accent);padding-top:5px;
+  }
+  .rules{padding:0;margin-inline:0;}
+  .rules b{font-weight:700;}
+  .rules span{display:block;color:var(--ink-2);font-size:14px;margin-top:2px;}
+
+  .caveat{
+    margin-top:56px;border:1px solid var(--rule-hard);background:var(--sheet);
+    padding:22px 24px;font-size:13.5px;color:var(--ink-2);max-width:70ch;
+  }
+  .caveat h4{font-size:14px;color:var(--ink);margin-bottom:8px;font-family:"IBM Plex Mono",ui-monospace,monospace;letter-spacing:.08em;}
+  footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--rule);font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;color:var(--ink-3);letter-spacing:.08em;}
+</style>
+
+<div class="wrap">
+
+  <div class="eyebrow">
+    <span>研究ノート補遺</span><span>2026.09.14</span><span>対外未提出・社内検討用</span>
+  </div>
+
+  <h1>誰が請求書を<br>受け取るのか</h1>
+  <p class="sub">08.26ノート「AIが速くなるほど、人間は遅い場所で稼ぐ」10案の、支払者の組み替え</p>
+
+  <div class="lede">
+    <p>前回の10案は「誰が価値を受け取るか」で設計した。受け取る人（高齢者、過疎地、個人作家、商店街）と払える人が一致していない案が多く、その穴を自治体予算で埋める前提になっていた。今回は<strong>支払者を先に決めてから事業を組み直す</strong>。10案の中身そのものは変えていない。変えたのは請求書の宛名だけだ。</p>
+    <p>自治体を外す理由は財源の善し悪しではない。単価が桁で足りず、年度で切れ、通った時点で「実証事業」として完了扱いになり、二度目の発注が構造的に来ないからだ。観光大使AIフェーズ0で確認したのは、ここだった。自治体は顧客から外し、<strong>後援名義と紹介を出す共同保証人</strong>として残す。</p>
+  </div>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">A</span><h2>支払者を先に決める</h2></div>
+    <p class="sec-note">同じサービスが、買う側の科目によって値段を変える。3日間の技能体験は、観光の科目で買われれば2万円、後継者教育の科目で買われれば50万円になる。原価は同じだ。10案の組み替えは全部この一点に集約される。</p>
+
+    <div class="premise">
+      <div><div class="k">見送る理由</div><div class="v">自治体の委託費は1件あたりの上限が低く、複数年契約になりにくい。単年度で成果報告書が出た時点で担当が代わり、関係が切れる。</div></div>
+      <div><div class="k">構造の問題</div><div class="v">公的予算は公平性で評価される。特定の1社・1人に集中投資して伸ばす、という事業の伸ばし方と評価軸が噛み合わない。</div></div>
+      <div><div class="k">残す使い道</div><div class="v">後援名義・現地の紹介・場所の貸し出しは、民間の支払者に売るときの信用を直接押し上げる。金は取らず、信用だけ借りる。</div></div>
+    </div>
+
+    <div class="tiers">
+      <div class="tier">
+        <h3>企業の既存科目</h3>
+        <div class="amt">研修費 / 福利厚生費 / 周年・広報費 / 採用費</div>
+        <p>毎年必ず消化される予算。新規の稟議を起こさせるのではなく、すでに動いている科目の中に入り込む。</p>
+      </div>
+      <div class="tier">
+        <h3>金融の付帯サービス費</h3>
+        <div class="amt">保険の付帯 / 健保の保健事業 / 顧客維持費</div>
+        <p>解約を防ぐための費用。契約者が離れるコストと比べて判断されるので、効果の証明が単価より優先される。</p>
+      </div>
+      <div class="tier">
+        <h3>ブランドと富裕層の体験費</h3>
+        <div class="amt">外商 / ホテル体験仕入れ / 承継・子女教育</div>
+        <p>値引き交渉が最も弱い層。「他では買えない」ことが価格の根拠になり、身体性と本人保証がそのまま値札になる。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">B</span><h2>10案の組み替え</h2></div>
+    <p class="sec-note">番号は08.26ノートと対応している。優先度ではない。各案は「支払者 / 予算科目 / 単価仮説 / フェーズ0の1件 / キル基準」の5項目でだけ書いた。これ以上の設計は、1件目の請求書が通ってからでないと意味がない。</p>
+
+    <div class="ledger">
+
+      <article class="rec">
+        <div class="rec-top">
+          <span class="rec-no">01</span>
+          <h3>熟練者レンタル基盤</h3>
+          <div class="swap"><span class="old">自治体SaaS</span><span class="arrow">→</span><span class="new">高級宿の体験仕入れ</span></div>
+        </div>
+        <p class="rec-why">1泊10万円級の宿は「ここでしか買えない時間」で単価を守る必要があり、体験の仕入れ予算をすでに持っている。自治体に売るのは基盤利用料（数十万円・単年度）だが、宿に売るのは仕入れ原価で、埋まるかぎり毎月立つ。売るのは達人そのものではなく、名簿・保険・当日運営をまとめた供給網。</p>
+        <div class="fields">
+          <div class="f"><span class="k">支払者</span><span class="v">ラグジュアリーホテル・高級旅館、法人インセンティブ旅行を組む旅行会社</span></div>
+          <div class="f"><span class="k">予算科目</span><span class="v">宿泊商品の体験仕入れ原価 / MICE企画費</span></div>
+          <div class="f money"><span class="k">単価仮説</span><span class="v">1組 2〜5万円で宿が仕入れ、宿泊単価に上乗せ。取次手数料25〜30%＋名簿・保険の管理料。</span></div>
+          <div class="f"><span class="k">フェーズ0（1件）</span><span class="v">1宿 × 1達人 × 10組を全部手配で回し、宿宛の請求書を通す。</span></div>
+          <div class="f kill"><span class="k">キル基準</span><span class="v">宿が2回目を自発的に発注しない。または達人が3件目で降りる。</span></div>
+        </div>
+      </article>
+
+      <article class="rec">
+        <div class="rec-top">
+          <span class="rec-no">02</span>
+          <h3>人力認証ラベル発行所</h3>
+          <div class="swap"><span class="old">作家の年会費</span><span class="arrow">→</span><span class="new">混入リスクを負う側</span></div>
+        </div>
+        <p class="rec-why">個人作家は年会費を払えない。だが納品物にAI生成が混ざっていたと発覚したとき謝罪する側——広告主・出版社・ブランド——は払える。保険と同じ構造で、事故コストの一部を前払いさせる。自己申告では成立しないという性質も、第三者検査として売るほうに素直に乗る。</p>
+        <div class="fields">
+          <div class="f"><span class="k">支払者</span><span class="v">広告主・広告代理店・出版社、高額工芸／アートの取引プラットフォーム</span></div>
+          <div class="f"><span class="k">予算科目</span><span class="v">制作費内の校閲・検収費 / 真贋保証コスト</span></div>
+          <div class="f money"><span class="k">単価仮説</span><span class="v">1案件 3〜10万円の検査料、または取引額の1〜2%。</span></div>
+          <div class="f"><span class="k">フェーズ0（1件）</span><span class="v">代理店1社の1案件で、納品ライターの制作過程を実際に検査し、報告書1枚を出して請求する。</span></div>
+          <div class="f kill"><span class="k">キル基準</span><span class="v">出した報告書を法務・広報が読まない（＝事故コストとして認識されていない）。</span></div>
+        </div>
+      </article>
+
+      <article class="rec">
+        <div class="rec-top">
+          <span class="rec-no">03</span>
+          <h3>職人ブランディング</h3>
+          <div class="swap"><span class="old">工芸事業者の売上歩合</span><span class="arrow">→</span><span class="new">大企業の調達代行</span></div>
+        </div>
+        <p class="rec-why">ECを持てない工芸事業者に、制作費を出す体力はない。手仕事を欲しがっている側——周年記念品、株主優待、ホテルのアメニティ、外商の顧客ギフト——に予算がある。作り手から取るのをやめ、買い手から取って産地に流す調達代行に反転させる。作り手の言葉と手の跡は、納品物に付ける記録として一緒に売る。</p>
+        <div class="fields">
+          <div class="f"><span class="k">支払者</span><span class="v">上場企業の周年事業事務局、百貨店外商、ホテル</span></div>
+          <div class="f"><span class="k">予算科目</span><span class="v">周年事業費 / ノベルティ・ギフト調達費 / アメニティ費</span></div>
+          <div class="f money"><span class="k">単価仮説</span><span class="v">1案件 300〜2,000万円（調達＋撮影＋物語コンテンツ一式）。</span></div>
+          <div class="f"><span class="k">フェーズ0（1件）</span><span class="v">1社の周年ギフト500個を、1産地だけで受注して納める。</span></div>
+          <div class="f kill"><span class="k">キル基準</span><span class="v">発注元が「コピーはAI生成でいい」と言う（＝本人保証に値札が付いていない）。</span></div>
+        </div>
+      </article>
+
+      <article class="rec">
+        <div class="rec-top">
+          <span class="rec-no">04</span>
+          <h3>対面リトリート設計</h3>
+          <div class="swap"><span class="old">人事部の研修枠</span><span class="arrow">→</span><span class="new">投資先バリューアップ</span></div>
+        </div>
+        <p class="rec-why">研修市場は伸びているが、人事部の研修枠に入れられた瞬間に相見積りと単価比較の対象になる。同じ合宿を、PEファンドの投資先支援やIPO準備の組織づくりとして売ると、科目が経営課題になり桁が変わる。その場で組み替える判断力は、研修講師としてより、経営の場に立ち会う人として値付けされる。</p>
+        <div class="fields">
+          <div class="f"><span class="k">支払者</span><span class="v">PEファンド（投資先支援）、IPO準備企業、創業家・資産管理会社</span></div>
+          <div class="f"><span class="k">予算科目</span><span class="v">投資先バリューアップ予算 / 組織開発費</span></div>
+          <div class="f money"><span class="k">単価仮説</span><span class="v">1社 300〜800万円／回（設計・場所選定・当日ファシリ込み）。</span></div>
+          <div class="f"><span class="k">フェーズ0（1件）</span><span class="v">1社の経営合宿を設計から当日まで担い、「何の意思決定が変わったか」を1枚で報告する。</span></div>
+          <div class="f kill"><span class="k">キル基準</span><span class="v">次回も人事部の研修枠で処理される（＝経営課題として買われていない）。</span></div>
+        </div>
+      </article>
+
+      <article class="rec">
+        <div class="rec-top">
+          <span class="rec-no">05</span>
+          <h3>高齢者伴走サブスク</h3>
+          <div class="swap"><span class="old">高齢者本人の自己負担</span><span class="arrow">→</span><span class="new">介護離職を恐れる企業</span></div>
+        </div>
+        <p class="rec-why">訪問介護員の有効求人倍率14.14倍という穴は事実だが、穴の前に立っている高齢者本人に月額を払う習慣はない。払う動機が強いのは、遠距離介護中の社員を失いかけている企業と、契約者を引き止めたい保険・信託だ。社員1人の離職は採用と育成のやり直しになる。予防に金を出す理由がそこにある。</p>
+        <div class="fields">
+          <div class="f"><span class="k">支払者</span><span class="v">大企業の人事・健保組合、生損保の契約者付帯サービス、信託・証券の富裕層顧客維持</span></div>
+          <div class="f"><span class="k">予算科目</span><span class="v">福利厚生費 / EAP契約 / 付帯サービス費 / 顧客維持費</span></div>
+          <div class="f money"><span class="k">単価仮説</span><span class="v">全社契約で従業員1人あたり月100〜300円＋訪問実費。保険会社とは年間契約。</span></div>
+          <div class="f"><span class="k">フェーズ0（1件）</span><span class="v">中堅1社の社員10名の親元へ、学生同行を3ヶ月。人事の離職リスク面談の変化を記録する。</span></div>
+          <div class="f kill"><span class="k">キル基準</span><span class="v">人事が使ってほしい社員に使われない（＝制度として置かれただけで終わる）。</span></div>
+        </div>
+      </article>
+
+      <article class="rec">
+        <div class="rec-top">
+          <span class="rec-no">06</span>
+          <h3>弟子入り合宿</h3>
+          <div class="swap"><span class="old">観光パッケージ</span><span class="arrow">→</span><span class="new">後継者教育・私学</span></div>
+        </div>
+        <p class="rec-why">同じ3日が、観光の科目なら2万円、後継者教育の科目なら数十万円になる。オーナー家の事業承継、私立中高の探究学習、富裕層の子女教育は、どれも「体験の質」ではなく「その後の人格に効いたか」で買う。師匠との関係が体験後も続くという設計は、この科目でだけ正当に評価される。</p>
+        <div class="fields">
+          <div class="f"><span class="k">支払者</span><span class="v">オーナー企業の創業家・資産管理会社、私立中高／インターナショナルスクール</span></div>
+          <div class="f"><span class="k">予算科目</span><span class="v">後継者育成費 / 教育費</span></div>
+          <div class="f money"><span class="k">単価仮説</span><span class="v">1名 30〜80万円（3日・少人数・記録の納品付き）。</span></div>
+          <div class="f"><span class="k">フェーズ0（1件）</span><span class="v">承継期のオーナー家1家族、親子2名で1本だけ組む。</span></div>
+          <div class="f kill"><span class="k">キル基準</span><span class="v">終了3ヶ月後、師匠と1度も連絡が続いていない（＝観光と同じものを高く売っただけ）。</span></div>
+        </div>
+      </article>
+
+      <article class="rec">
+        <div class="rec-top">
+          <span class="rec-no">07</span>
+          <h3>対面グループケア拠点</h3>
+          <div class="swap"><span class="old">孤独・孤立対策予算</span><span class="arrow">→</span><span class="new">健保の保健事業費</span></div>
+        </div>
+        <p class="rec-why">孤独・孤立対策の予算は年度で増減し、採択されても単年で終わる。同じ場を、健康経営とメンタル対策の科目に置くと、健保組合の保健事業費という毎年必ず消化される予算に乗る。AI依存の自覚率が上がっているという事実は、ここでは市場規模ではなく、人事に説明するための導入理由として使う。</p>
+        <div class="fields">
+          <div class="f"><span class="k">支払者</span><span class="v">企業の健康経営担当・健保組合、大学の学生支援部門</span></div>
+          <div class="f"><span class="k">予算科目</span><span class="v">保健事業費 / EAP契約 / 学生支援費</span></div>
+          <div class="f money"><span class="k">単価仮説</span><span class="v">1セッション 10〜20万円、または1拠点あたりの年間契約。</span></div>
+          <div class="f"><span class="k">フェーズ0（1件）</span><span class="v">1社1部署でピア・グループを8週。ストレスチェックの前後比較を取る。</span></div>
+          <div class="f kill"><span class="k">キル基準</span><span class="v">2クール目を現場でなく人事が止める（＝効果を数字で示せていない）。</span></div>
+        </div>
+      </article>
+
+      <article class="rec">
+        <div class="rec-top">
+          <span class="rec-no">08</span>
+          <h3>AI-Free連載レーベル</h3>
+          <div class="swap"><span class="old">読者の直接購読料</span><span class="arrow">→</span><span class="new">広告主のブランド費</span></div>
+        </div>
+        <p class="rec-why">読者課金は積み上がるまでが長く、単価も薄い。先に払えるのは、AI量産記事に自社名を並べたくない広告主とオウンドメディアだ。売るのは文章そのものではなく、下書き・録音・改稿履歴という証跡を納品物に含めること。証跡の仕組みは02と同じものを使い、内製は1つに絞る。</p>
+        <div class="fields">
+          <div class="f"><span class="k">支払者</span><span class="v">事業会社のオウンドメディア、ブランド、出版社の外注編集</span></div>
+          <div class="f"><span class="k">予算科目</span><span class="v">コンテンツ制作費 / ブランド管理費</span></div>
+          <div class="f money"><span class="k">単価仮説</span><span class="v">記事1本 20〜60万円（証跡付き）。読者課金は3年目以降の任意。</span></div>
+          <div class="f"><span class="k">フェーズ0（1件）</span><span class="v">ブランド1社に連載3本。証跡を納品物に必ず含めて出す。</span></div>
+          <div class="f kill"><span class="k">キル基準</span><span class="v">発注元が「証跡は要らない」と言う（＝人が書いた保証に上乗せ価格が付かない）。</span></div>
+        </div>
+      </article>
+
+      <article class="rec">
+        <div class="rec-top">
+          <span class="rec-no">09</span>
+          <h3>無人×有人ハイブリッド窓口</h3>
+          <div class="swap"><span class="old">商店街の空き店舗</span><span class="arrow">→</span><span class="new">ビルオーナーと士業</span></div>
+        </div>
+        <p class="rec-why">空き店舗を抱えている商店街には、運営を委託する金がない。同じ仕組みを、共用部や空き区画の運営を外注したいビルオーナーに売り、常駐日の相談枠は士業の見込み客獲得費として売る。「この曜日にあの人がいる」という予測可能性は、来訪動機であると同時に、リードが読める営業チャネルでもある。</p>
+        <div class="fields">
+          <div class="f"><span class="k">支払者</span><span class="v">不動産デベロッパー・ビルオーナー、社労士・行政書士・金融の営業部門</span></div>
+          <div class="f"><span class="k">予算科目</span><span class="v">共用部運営費 / リーシング費 / 見込み客獲得費</span></div>
+          <div class="f money"><span class="k">単価仮説</span><span class="v">運営受託 月20〜50万円 ＋ 士業からのリード課金 1件1〜3万円。</span></div>
+          <div class="f"><span class="k">フェーズ0（1件）</span><span class="v">1ビルの空き区画1つで、週2日だけ士業常駐を3ヶ月。リード数を数える。</span></div>
+          <div class="f kill"><span class="k">キル基準</span><span class="v">無人日の稼働が賃料を割り、かつ士業がリードを買わない。</span></div>
+        </div>
+      </article>
+
+      <article class="rec">
+        <div class="rec-top">
+          <span class="rec-no">10</span>
+          <h3>関係人口コーディネーター</h3>
+          <div class="swap"><span class="old">自治体の下請け</span><span class="arrow">→</span><span class="new">地方に拠点を持つ企業</span></div>
+        </div>
+        <p class="rec-why">関係人口の予算は、受け取る側の自治体にはほとんどない。金があるのは出す側——企業版ふるさと納税の拠出企業、地方に工場や拠点を持ち地域対応を担当者1人に背負わせている企業、寄付者を引き止めたいポータル事業者だ。同じ人が何度も現れるという性質は、企業側では「担当が代わらない地域窓口」として売れる。</p>
+        <div class="fields">
+          <div class="f"><span class="k">支払者</span><span class="v">企業版ふるさと納税の拠出企業、地方拠点を持つ事業会社、ふるさと納税ポータル・返礼品事業者</span></div>
+          <div class="f"><span class="k">予算科目</span><span class="v">広報・地域共生費 / 寄付者リテンション費</span></div>
+          <div class="f money"><span class="k">単価仮説</span><span class="v">年間契約 300〜600万円／社。候補者の発掘はAI、継続接点だけ人力。</span></div>
+          <div class="f"><span class="k">フェーズ0（1件）</span><span class="v">地方拠点を持つ企業1社の地域窓口を、半年だけ代行する。</span></div>
+          <div class="f kill"><span class="k">キル基準</span><span class="v">先方の担当者交代で契約が消える（＝仕組みでなく個人の関係に乗っただけ）。</span></div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">C</span><h2>フェーズ0の規律</h2></div>
+    <p class="sec-note">観光大使AIで学んだのは、仕組みを先に作ると、需要がなかったことに気づくのが半年遅れるということだった。10案すべてに同じ縛りをかける。</p>
+    <ol class="rules">
+      <li><b>支払者を実名の1社で言えるまで着手しない。</b><span>「企業の研修費」は支払者ではない。稟議を通す個人の顔と部署名まで書けて初めて着手する。</span></li>
+      <li><b>1件目は必ず手作業でやる。</b><span>基盤化・SaaS化・テンプレ化は3件目以降。1件目で自動化したものは、だいたい誰も使わなかった。</span></li>
+      <li><b>値付けは原価からでなく、相手の科目から決める。</b><span>同じ3日が2万円にも50万円にもなる。原価に利益率を乗せた瞬間、安いほうの科目に落ちる。</span></li>
+      <li><b>無料実証をやらない。</b><span>請求書が通ったかどうかだけが需要の証拠。無料で喜ばれたという事実には、何の情報も入っていない。</span></li>
+      <li><b>キル基準と期日を先に書く。</b><span>上の10案には全部書いた。期日が来たら、手応えがあっても切る。</span></li>
+      <li><b>自治体は顧客から外し、信用の側に置く。</b><span>後援名義・現地の紹介・場所。金を取らない代わりに、民間に売るときの信用として借りる。</span></li>
+    </ol>
+  </section>
+
+  <div class="caveat">
+    <h4>数字の扱いについて</h4>
+    <p>本ノートの単価・契約形態・料率はすべて設計上の仮説で、一次ソースはない。事実として確認済みなのは08.26ノートに引用した数値（訪問介護員の有効求人倍率14.14倍、統一ラベリング合意、企業向け研修市場5,858億円など）だけ。対外資料に転用する際は、この2つを必ず分けて書くこと。「孤独経済」「体験経済」の市場規模予測は出典間で100倍以上の開きがあるため、引き続き使わない。</p>
+  </div>
+
+  <footer>研究ノート補遺 / 2026.09.14 / 08.26「AIが速くなるほど、人間は遅い場所で稼ぐ」より継続</footer>
+</div>

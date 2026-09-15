@@ -1,0 +1,389 @@
+<title>遅い場所の値札</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#EEEFE9; --sheet:#FAFAF6;
+    --ink:#191C17; --ink-2:#5C6158; --ink-3:#8A8F84;
+    --rule:#D2D5CA; --rule-hard:#B4B9AB;
+    --accent:#255541; --accent-soft:#DCE7DF;
+    --flag:#8C3320; --flag-soft:#F0DFD9;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#14170F; --sheet:#1C1F18;
+      --ink:#E9EBE2; --ink-2:#A2A897; --ink-3:#787E6E;
+      --rule:#333827; --rule-hard:#4A5039;
+      --accent:#86BFA0; --accent-soft:#22301F;
+      --flag:#DE8A6E; --flag-soft:#33201A;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#14170F; --sheet:#1C1F18;
+    --ink:#E9EBE2; --ink-2:#A2A897; --ink-3:#787E6E;
+    --rule:#333827; --rule-hard:#4A5039;
+    --accent:#86BFA0; --accent-soft:#22301F;
+    --flag:#DE8A6E; --flag-soft:#33201A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Zen Kaku Gothic New","Noto Sans JP",system-ui,sans-serif;
+    font-size:15px;line-height:1.9;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:980px;margin:0 auto;padding-inline:20px;padding-block:52px 96px;}
+  h1,h2,h3,h4{font-family:"Zen Old Mincho",serif;text-wrap:balance;margin:0;line-height:1.4;}
+  p{margin:0;}
+  a{color:var(--accent);}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;}
+
+  .eyebrow{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:10px 20px;
+    padding-bottom:14px;border-bottom:1px solid var(--rule-hard);}
+  h1{font-size:clamp(32px,7vw,54px);font-weight:900;margin-top:26px;letter-spacing:.03em;}
+  .sub{font-family:"Zen Old Mincho",serif;font-size:clamp(15px,2.4vw,18px);color:var(--ink-2);margin-top:12px;}
+
+  .tldr{margin-top:28px;border-left:3px solid var(--accent);padding:4px 0 4px 20px;
+    display:flex;flex-direction:column;gap:10px;max-width:64ch;}
+  .tldr b{font-weight:700;}
+
+  section{margin-top:56px;}
+  .sec-head{display:flex;align-items:baseline;gap:14px;border-bottom:2px solid var(--ink);padding-bottom:8px;}
+  .sec-no{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;color:var(--accent);letter-spacing:.1em;font-weight:600;}
+  .sec-head h2{font-size:clamp(19px,3.4vw,24px);font-weight:700;}
+  .sec-note{margin-top:16px;max-width:64ch;color:var(--ink-2);}
+
+  .facts{margin-top:22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;
+    background:var(--rule);border:1px solid var(--rule);}
+  .fact{background:var(--sheet);padding:18px 18px 16px;}
+  .fact .lab{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3);}
+  .fact .num{font-family:"Zen Old Mincho",serif;font-size:clamp(24px,4.6vw,32px);font-weight:900;
+    color:var(--accent);margin-top:6px;font-variant-numeric:tabular-nums;line-height:1.2;}
+  .fact .txt{font-size:13px;line-height:1.75;color:var(--ink-2);margin-top:8px;}
+  .fact .src{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:10px;color:var(--ink-3);margin-top:8px;}
+
+  .rulequote{margin-top:26px;font-family:"Zen Old Mincho",serif;font-size:clamp(18px,3.6vw,26px);
+    font-weight:700;line-height:1.7;max-width:26ch;}
+  .rulequote em{font-style:normal;background:var(--accent-soft);padding:0 .2em;}
+  .tiers{margin-top:24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:18px;}
+  .tier{border-top:3px solid var(--accent);padding-top:12px;}
+  .tier h3{font-size:16px;font-weight:700;}
+  .tier .amt{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;color:var(--accent);margin-top:5px;line-height:1.6;}
+  .tier p{margin-top:8px;color:var(--ink-2);font-size:13.5px;}
+  .aside{margin-top:24px;border:1px solid var(--rule-hard);background:var(--sheet);padding:18px 20px;
+    font-size:13.5px;color:var(--ink-2);max-width:70ch;}
+  .aside b{color:var(--ink);}
+
+  /* --- picker --- */
+  .picker{margin-top:22px;border:1px solid var(--rule-hard);background:var(--sheet);padding:16px 18px;
+    display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;}
+  .picker label{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink-3);}
+  .picker input{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--rule-hard);
+    background:var(--paper);color:var(--ink);min-width:180px;}
+  .picker input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+  .picker .status{font-size:13px;color:var(--ink-2);flex:1 1 200px;}
+  .tally{margin-top:14px;font-size:13.5px;color:var(--ink-2);}
+  .tally b{color:var(--ink);}
+
+  .block-label{margin-top:36px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+  .block-label h3{font-size:18px;font-weight:700;}
+  .block-label span{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;color:var(--ink-3);letter-spacing:.1em;}
+
+  .grid{margin-top:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:1px;
+    background:var(--rule);border:1px solid var(--rule);}
+  .card{background:var(--sheet);padding:16px 16px 14px;display:flex;flex-direction:column;gap:8px;}
+  .card .head{display:flex;gap:10px;align-items:baseline;}
+  .card .no{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;font-weight:600;color:var(--ink-3);}
+  .card h4{font-size:16px;font-weight:700;flex:1;}
+  .card .pay{font-size:13.5px;line-height:1.7;}
+  .card .pay span{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:10px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink-3);display:block;}
+  .card .first{font-size:13px;color:var(--ink-2);line-height:1.7;}
+  .card .first span{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:10px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink-3);display:block;}
+  .card .foot{margin-top:auto;padding-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .pick-btn{font:inherit;font-size:12.5px;font-family:"IBM Plex Mono",ui-monospace,monospace;letter-spacing:.06em;
+    padding:5px 12px;border:1px solid var(--rule-hard);background:transparent;color:var(--ink-2);cursor:pointer;}
+  .pick-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .pick-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .pick-btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--sheet);font-weight:600;}
+  .who{font-size:12px;color:var(--ink-3);line-height:1.6;flex:1 1 100%;}
+  .who b{color:var(--accent);font-weight:600;}
+  [hidden]{display:none !important;}
+
+  .short{margin-top:22px;display:grid;gap:2px;background:var(--rule);border:1px solid var(--rule);}
+  .short > div{background:var(--sheet);padding:16px 18px;display:grid;grid-template-columns:minmax(0,13ch) 1fr;gap:4px 20px;}
+  .short .k{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;letter-spacing:.08em;color:var(--accent);padding-top:4px;}
+  .short .v{max-width:60ch;font-size:14px;}
+  @media(max-width:640px){.short > div{grid-template-columns:1fr;}}
+
+  ol.rules{margin-top:20px;padding:0;counter-reset:r;}
+  ol.rules li{list-style:none;counter-increment:r;display:grid;grid-template-columns:auto 1fr;gap:16px;
+    padding-block:13px;border-bottom:1px dashed var(--rule);}
+  ol.rules li::before{content:counter(r,decimal-leading-zero);
+    font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;font-weight:600;color:var(--accent);padding-top:5px;}
+  ol.rules b{font-weight:700;}
+  ol.rules span{display:block;color:var(--ink-2);font-size:13.5px;margin-top:2px;}
+
+  .todo{margin-top:22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;}
+  .todo > div{border-top:3px solid var(--flag);padding-top:12px;}
+  .todo h4{font-size:15px;font-weight:700;}
+  .todo p{margin-top:8px;font-size:13.5px;color:var(--ink-2);}
+
+  .caveat{margin-top:44px;border:1px solid var(--rule-hard);background:var(--sheet);padding:20px 22px;
+    font-size:13.5px;color:var(--ink-2);max-width:72ch;}
+  .caveat h4{font-size:13.5px;color:var(--ink);margin-bottom:8px;
+    font-family:"IBM Plex Mono",ui-monospace,monospace;letter-spacing:.08em;}
+  footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--rule);
+    font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;color:var(--ink-3);letter-spacing:.06em;line-height:2;}
+  @media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important;}}
+</style>
+
+<div class="wrap">
+
+  <div class="eyebrow"><span>社内共有</span><span>2026.09.14</span><span>研究ノート3本の要約＋検討のお願い</span></div>
+
+  <h1>遅い場所の値札</h1>
+  <p class="sub">AIが認知労働を飲み込むほど値上がりする領域で、20の事業案をどう成立させるか</p>
+
+  <div class="tldr">
+    <p><b>①</b> AIが代われないのは「身体に入っている技」と「本人が作ったという由来」の2つ。この2領域だけ、需要が伸びていないのに値段が上がっている。</p>
+    <p><b>②</b> だが価値を受け取る人（高齢者・過疎地・個人作家）と、金を払える人は一致していない。<b>支払者を先に決めてから事業を組む</b>と、同じ中身が桁違いの値段で売れる。</p>
+    <p><b>③</b> 20案を並べたが、全部は試せない。<b>1件目を手作業でやり、請求書が通ったかどうかだけを見る</b>。どれから行くか、意見がほしい。</p>
+  </div>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">01</span><h2>なぜ今この話をするか</h2></div>
+    <p class="sec-note">Web調査4系統から、一次ソースで断定できた事実だけを4つ。市場規模の予測値は出典間で100倍以上ぶれるので、意図的に外してある。</p>
+    <div class="facts">
+      <div class="fact">
+        <div class="lab">労働市場</div><div class="num">14.14倍</div>
+        <div class="txt">訪問介護員の有効求人倍率。全国平均0.99倍に対し突出。建設・美容・接客も2〜3倍台で高止まり。需要が伸びたのではなく、AIが手を出せない。</div>
+        <div class="src">職業別有効求人倍率マップ / 2026.05</div>
+      </div>
+      <div class="fact">
+        <div class="lab">本人保証</div><div class="num">全業界合意</div>
+        <div class="txt">IFPI・RIAA・グラミー・SAG-AFTRA等が「AI-Generated / AI-Assisted」を区別する統一ラベリングで合意。Traxsourceは全面導入済み。</div>
+        <div class="src">RIAA公式発表 / 2026.07</div>
+      </div>
+      <div class="fact">
+        <div class="lab">対面ビジネス</div><div class="num">2,300億円</div>
+        <div class="txt">フレキシブルオフィス市場の2026年度予測。2020年度800億円から約3倍。常駐する人を置く拠点運営が事業として回り始めている。</div>
+        <div class="src">サーブコープ調べ / 2026年度予測</div>
+      </div>
+      <div class="fact">
+        <div class="lab">ケア</div><div class="num">$150M</div>
+        <div class="txt">高齢者への訪問同行サービス米Papa社のSeries D。Medicare Advantageの給付対象に採用され、全米1万都市・累計300万回超。</div>
+        <div class="src">MobiHealthNews</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">02</span><h2>今回いちばん言いたいこと</h2></div>
+    <p class="rulequote">同じ3日間の技能体験が、<em>観光の科目</em>で買われれば2万円、<em>後継者教育の科目</em>で買われれば50万円になる。原価は同じ。</p>
+    <p class="sec-note">つまり値段を決めているのは中身ではなく、相手の予算科目だ。だから設計の順番を逆にする。「何をやるか」ではなく「誰の、どの予算科目から取るか」を先に決める。20案はすべてこの順番で書き直してある。</p>
+
+    <div class="tiers">
+      <div class="tier"><h3>企業の既存科目</h3>
+        <div class="amt">研修費 / 福利厚生費 / 周年・広報費 / 採用費</div>
+        <p>毎年必ず消化される予算。新規の稟議を起こさせず、動いている科目の中に入る。</p></div>
+      <div class="tier"><h3>金融の付帯サービス費</h3>
+        <div class="amt">保険の付帯 / 健保の保健事業 / 顧客維持費</div>
+        <p>解約を防ぐ費用。顧客が離れるコストと比較されるので、単価より効果の証明が効く。</p></div>
+      <div class="tier"><h3>ブランドと富裕層の体験費</h3>
+        <div class="amt">外商 / ホテルの体験仕入れ / 承継・子女教育</div>
+        <p>値引き交渉が最も弱い。「他では買えない」が価格の根拠になる層。</p></div>
+    </div>
+
+    <div class="aside">
+      <p><b>自治体を支払者から外した理由。</b>財源の善し悪しではなく、単価が桁で足りず、年度で切れ、通った時点で「実証事業」として完了扱いになり、二度目の発注が構造的に来ないから。観光大使AIフェーズ0で確認したのはここだった。<b>自治体は顧客から外し、後援名義・現地の紹介・場所を借りる共同保証人として残す。</b>金は取らず、信用だけ借りる。</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">03</span><h2>20案と、手挙げのお願い</h2></div>
+    <p class="sec-note">Aは支払者を替えた10案、Bはさらに前提そのものを裏返した10案。<b>気になる案の「やりたい」を押してください</b>。名前を入れると誰が押したか残り、次のミーティングの叩き台にします（押し直しで取り消せます）。</p>
+
+    <div class="picker">
+      <label for="who-name">あなたの名前</label>
+      <input id="who-name" type="text" placeholder="例：小田" autocomplete="name" maxlength="20">
+      <p class="status" id="pick-status">読み込み中…</p>
+    </div>
+    <p class="tally" id="tally">まだ手が挙がっていません。</p>
+
+    <div class="block-label"><h3>A｜支払者を替えた10案</h3><span>08.26の10案／請求書の宛名だけを変更</span></div>
+    <div class="grid" id="grid-a"></div>
+
+    <div class="block-label"><h3>B｜前提を裏返した10案</h3><span>AIは競合／人は雇う／技は今使う／検知して排除する、を反転</span></div>
+    <div class="grid" id="grid-b"></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">04</span><h2>僕の推しは、この3本</h2></div>
+    <p class="sec-note">面白さではなく、<b>支払者への距離</b>で選んだ。3本とも先方に既存の予算科目があり、フェーズ0が1件・1人で完結する。逆にL7（標準形式）とL9（保険）は相手が業界団体と損保なので、年単位になる。</p>
+    <div class="short">
+      <div><div class="k">L3</div><div class="v"><b>出向・セカンドキャリアの受け皿。</b>いま最も余っている労働力は失業者ではなく、企業内に滞留した50代。そして出す側にはすでに予算が付いている。熟練者の供給問題と支払者の問題が一度に解ける唯一の案。</div></div>
+      <div><div class="k">L6</div><div class="v"><b>相続前の語りの記録。</b>相続は金融機関にとって資産流出の最大の危機で、顧客維持費が厚い。青森でやってきた聴き書きが、そのまま商品になる。</div></div>
+      <div><div class="k">L10</div><div class="v"><b>海外富裕層・ブランドへの直販。</b>同じ体験が国内価格の3〜5倍。必要なのは英文の提案1枚と、当日の段取りだけ。国内向けを作り込む前に試せる。</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">05</span><h2>どれをやるにせよ、守りたい6つ</h2></div>
+    <p class="sec-note">観光大使AIで学んだのは、仕組みを先に作ると、需要がなかったと気づくのが半年遅れるということだった。</p>
+    <ol class="rules">
+      <li><b>支払者を実名の1社で言えるまで着手しない。</b><span>「企業の研修費」は支払者ではない。稟議を通す個人の顔と部署名まで書けて、初めて着手する。</span></li>
+      <li><b>1件目は必ず手作業でやる。</b><span>基盤化・SaaS化・テンプレ化は3件目以降。1件目から自動化したものは、だいたい誰も使わなかった。</span></li>
+      <li><b>値付けは原価からでなく、相手の科目から決める。</b><span>原価に利益率を乗せた瞬間、安いほうの科目に落ちる。</span></li>
+      <li><b>無料実証をやらない。</b><span>請求書が通ったかどうかだけが需要の証拠。無料で喜ばれた事実には情報が入っていない。</span></li>
+      <li><b>キル基準と期日を先に書く。</b><span>20案すべてに書いてある。期日が来たら、手応えがあっても切る。</span></li>
+      <li><b>作り手の取り分と撤回権を、契約より先に決める。</b><span>特にB群（AI企業に素材を貸す案）。売り切らない・分配率を先に開示する・看板を分ける。守れないなら、その案は取らない。</span></li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">06</span><h2>お願いしたいこと</h2></div>
+    <div class="todo">
+      <div><h4>今週中に、手を挙げる</h4><p>上のカードから、自分がやりたい／違和感がある案を選んでください。反対意見も知りたいので、ピンとこない理由があれば直接ください。</p></div>
+      <div><h4>支払者に、心当たりを出す</h4><p>いちばん欲しいのは案ではなく<b>実名の1社</b>です。知り合いに周年事業の担当、信託の営業、出向の人事がいたら教えてください。そこが1件目になります。</p></div>
+      <div><h4>次回、3本に絞る</h4><p>手挙げと心当たりを持ち寄って、着手する3本と、それぞれの1件目の期日・キル基準を決めます。決めたら、他の17案は当面触りません。</p></div>
+    </div>
+  </section>
+
+  <div class="caveat">
+    <h4>数字の扱いについて（重要）</h4>
+    <p>このページで一次ソースがあるのは「なぜ今この話をするか」の4つの数字だけです。20案に書いた単価・料率・分配率は<b>すべて設計上の仮説</b>で、検証はフェーズ0の請求書でしか行えません。対外資料に転用するときは、この2つを必ず分けて書いてください。「孤独経済」「体験経済」の市場規模予測は出典間で100倍以上の開きがあるため、使いません。</p>
+  </div>
+
+  <footer>
+    社内検討用 / 対外未提出<br>
+    元ノート：08.26「AIが速くなるほど、人間は遅い場所で稼ぐ」／補遺「誰が請求書を受け取るのか」／補遺II「十の反転」
+  </footer>
+</div>
+
+<script>
+(function(){
+  var IDEAS_A = [
+    ["A01","熟練者レンタル基盤","高級宿・旅館の体験仕入れ原価、法人インセンティブ旅行","1宿×1達人×10組を全部手配で回し、宿宛の請求書を通す"],
+    ["A02","人力認証ラベル","AI混入で謝罪する側＝広告主・出版社の検収費","代理店1社の1案件を検査し、報告書1枚を出して請求する"],
+    ["A03","職人ブランディング","大企業の周年事業費・外商ギフト調達費","1社の周年ギフト500個を、1産地だけで受注して納める"],
+    ["A04","対面リトリート設計","PEの投資先バリューアップ予算、IPO準備企業","1社の経営合宿を設計から当日まで担い、変わった意思決定を1枚で報告"],
+    ["A05","高齢者伴走サブスク","介護離職を恐れる企業の福利厚生、保険の付帯","1社の社員10名の親元へ学生同行を3ヶ月、離職リスク面談の変化を記録"],
+    ["A06","弟子入り合宿","オーナー家の後継者育成費、私学の探究学習費","承継期のオーナー家1家族、親子2名で1本だけ組む"],
+    ["A07","対面グループケア","健保組合の保健事業費、企業のメンタル予算","1社1部署でピア・グループを8週、ストレスチェックの前後比較を取る"],
+    ["A08","AI-Free連載レーベル","広告主のブランド費、オウンドメディア制作費","ブランド1社に連載3本。証跡を納品物に必ず含める"],
+    ["A09","無人×有人の窓口","ビルオーナーの共用部運営費、士業のリード獲得費","1ビルの空き区画で週2日だけ士業常駐を3ヶ月、リード数を数える"],
+    ["A10","関係人口の窓口代行","企業版ふるさと納税の拠出企業、地方拠点を持つ企業","地方拠点を持つ企業1社の地域窓口を、半年だけ代行する"]
+  ];
+  var IDEAS_B = [
+    ["L1","暗黙知ライセンス","AI開発企業のデータ調達費（売らずに貸す）","1職人の作業記録1本を、契約書ごと1社に提示して条件を見る"],
+    ["L2","技能伝承の身体記録","ゼネコン・製造業の技能伝承／生産技術投資","1社の1工程だけ、引退間近の1人を撮って教材1本を納める"],
+    ["L3","出向・セカンドキャリア受け皿","大企業の出向・セカンドキャリア支援費","1社から1人を6ヶ月受け入れ、送り出し元に請求書を通す"],
+    ["L4","同行スタッフを採用費で回す","新卒採用に苦戦する企業の採用広報費","1社の協賛で学生5人・3ヶ月、エントリー数を数える"],
+    ["L5","周年事業の前倒し記録","創業50年・100年が近いオーナー企業の社史費","周年まで5年ある企業1社に、創業家の語りを1本だけ納める"],
+    ["L6","相続前の語りの記録","信託・証券・保険の富裕層顧客維持費","1担当者の顧客1家族で実施し、次の顧客に自発的に紹介されるか見る"],
+    ["L7","制作過程の標準形式","業界団体の会費、検収側の品質管理費","作り手20人に様式を配り、検収側1社が発注条件に書くか見る"],
+    ["L8","AI使用の開示設計","制作会社・事業会社の広報／法務予算","制作会社1社の開示ルールを作り、実案件1本で運用して直す"],
+    ["L9","混入事故の引受（保険）","損保の引受、広告主が払う保険料","損保1社に検査報告書1枚を持ち込み、引受条件になり得るか判定をもらう"],
+    ["L10","海外富裕層・ブランド直販","海外手配会社、海外ブランドの体験・調達費","手配会社1社に英文1枚を送り、1組だけ受け入れて当日を完遂する"]
+  ];
+
+  var NAME_KEY = "osoi-name", ID_KEY = "osoi-id";
+  var picks = {};              // ideaId -> [names]
+  var myPicks = {};            // ideaId -> true
+  var db = null, myRef = null, myId = null, myName = "";
+
+  function store(k, v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v);}catch(e){ return null; } }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+
+  function cardHtml(it){
+    return '<article class="card" data-id="'+it[0]+'">'
+      + '<div class="head"><span class="no">'+it[0]+'</span><h4>'+esc(it[1])+'</h4></div>'
+      + '<p class="pay"><span>誰が払うか</span>'+esc(it[2])+'</p>'
+      + '<p class="first"><span>1件目にやること</span>'+esc(it[3])+'</p>'
+      + '<div class="foot"><button class="pick-btn" type="button" aria-pressed="false" hidden>やりたい</button>'
+      + '<span class="who"></span></div></article>';
+  }
+  document.getElementById("grid-a").innerHTML = IDEAS_A.map(cardHtml).join("");
+  document.getElementById("grid-b").innerHTML = IDEAS_B.map(cardHtml).join("");
+
+  var statusEl = document.getElementById("pick-status");
+  var tallyEl  = document.getElementById("tally");
+  var nameEl   = document.getElementById("who-name");
+  nameEl.value = myName = store(NAME_KEY) || "";
+
+  function render(){
+    document.querySelectorAll(".card").forEach(function(card){
+      var id = card.dataset.id;
+      var names = picks[id] || [];
+      var btn = card.querySelector(".pick-btn");
+      btn.setAttribute("aria-pressed", myPicks[id] ? "true" : "false");
+      btn.textContent = myPicks[id] ? "やりたい ✓" : "やりたい";
+      card.querySelector(".who").innerHTML = names.length
+        ? '<b>'+names.length+'人</b> ｜ '+esc(names.join("、"))
+        : "";
+    });
+    var rows = Object.keys(picks).filter(function(k){ return picks[k].length; })
+      .sort(function(a,b){ return picks[b].length - picks[a].length; }).slice(0,5);
+    tallyEl.innerHTML = rows.length
+      ? "手が挙がっている順：" + rows.map(function(k){ return "<b>"+k+"</b>（"+picks[k].length+"）"; }).join("　")
+      : "まだ手が挙がっていません。";
+  }
+  render();
+
+  function save(){
+    if(!myRef) return;
+    myRef.set({ name: myName || "名前未記入", picks: Object.keys(myPicks).filter(function(k){ return myPicks[k]; }), updatedAt: Date.now() })
+      .catch(function(e){ statusEl.textContent = "保存できませんでした（"+e.code+"）。ページを開き直してください。"; });
+  }
+
+  document.addEventListener("click", function(ev){
+    var btn = ev.target.closest(".pick-btn");
+    if(!btn) return;
+    var id = btn.closest(".card").dataset.id;
+    if(myPicks[id]) delete myPicks[id]; else myPicks[id] = true;
+    render();
+    save();
+  });
+  nameEl.addEventListener("change", function(){
+    myName = nameEl.value.trim().slice(0,20);
+    store(NAME_KEY, myName);
+    save();
+  });
+
+  var useDb = (window.claude && typeof window.claude.use === "function")
+    ? window.claude.use("db") : Promise.resolve(null);
+  useDb.then(function(d){
+    if(!d){ statusEl.textContent = "このページは閲覧のみです（手挙げは共有ビューでのみ使えます）。"; return; }
+    db = d;
+    myId = store(ID_KEY) || (Math.random().toString(36).slice(2) + Date.now().toString(36));
+    store(ID_KEY, myId);
+    myRef = db.collection("picks").doc(myId);
+    document.querySelectorAll(".pick-btn").forEach(function(b){ b.hidden = false; });
+    statusEl.textContent = "名前を入れて、カードの「やりたい」を押してください。";
+    if(Object.keys(myPicks).length) save();
+    db.collection("picks").onSnapshot(function(snap){
+      picks = {};
+      snap.docs.forEach(function(doc){
+        var data = doc.data() || {};
+        var nm = typeof data.name === "string" ? data.name.slice(0,20) : "名前未記入";
+        var list = Array.isArray(data.picks) ? data.picks : [];
+        list.forEach(function(id){
+          if(typeof id !== "string") return;
+          (picks[id] = picks[id] || []).push(nm);
+        });
+        if(doc.id === myId){
+          myPicks = {};
+          list.forEach(function(id){ if(typeof id === "string") myPicks[id] = true; });
+          if(!nameEl.value && data.name && data.name !== "名前未記入"){ nameEl.value = myName = data.name; }
+        }
+      });
+      render();
+    }, function(e){
+      statusEl.textContent = "共有の読み込みが止まりました（"+e.code+"）。再読み込みしてください。";
+    });
+  }).catch(function(){ statusEl.textContent = "このページは閲覧のみです。"; });
+})();
+</script>

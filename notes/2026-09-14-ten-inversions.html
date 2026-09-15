@@ -1,0 +1,299 @@
+<title>十の反転</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#EEEFE9; --sheet:#FAFAF6;
+    --ink:#191C17; --ink-2:#5C6158; --ink-3:#8A8F84;
+    --rule:#D2D5CA; --rule-hard:#B4B9AB;
+    --accent:#255541; --accent-soft:#DCE7DF;
+    --flag:#8C3320; --flag-soft:#F0DFD9;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#14170F; --sheet:#1C1F18;
+      --ink:#E9EBE2; --ink-2:#A2A897; --ink-3:#787E6E;
+      --rule:#333827; --rule-hard:#4A5039;
+      --accent:#86BFA0; --accent-soft:#22301F;
+      --flag:#DE8A6E; --flag-soft:#33201A;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#14170F; --sheet:#1C1F18;
+    --ink:#E9EBE2; --ink-2:#A2A897; --ink-3:#787E6E;
+    --rule:#333827; --rule-hard:#4A5039;
+    --accent:#86BFA0; --accent-soft:#22301F;
+    --flag:#DE8A6E; --flag-soft:#33201A;
+  }
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Zen Kaku Gothic New","Noto Sans JP",system-ui,sans-serif;
+    font-size:15px;line-height:1.9;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:940px;margin:0 auto;padding-inline:20px;padding-block:56px 96px;}
+  h1,h2,h3,h4{font-family:"Zen Old Mincho",serif;text-wrap:balance;margin:0;line-height:1.4;}
+  p{margin:0;}
+
+  .eyebrow{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:10px 20px;
+    padding-bottom:14px;border-bottom:1px solid var(--rule-hard);}
+  h1{font-size:clamp(32px,7vw,56px);font-weight:900;margin-top:28px;letter-spacing:.04em;}
+  .sub{font-family:"Zen Old Mincho",serif;font-size:clamp(15px,2.4vw,18px);color:var(--ink-2);margin-top:14px;}
+  .lede{max-width:62ch;margin-top:26px;display:flex;flex-direction:column;gap:16px;}
+  .lede strong{background:var(--accent-soft);font-weight:700;padding:0 .25em;}
+
+  section{margin-top:60px;}
+  .sec-head{display:flex;align-items:baseline;gap:14px;border-bottom:2px solid var(--ink);padding-bottom:8px;}
+  .sec-no{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;color:var(--accent);letter-spacing:.1em;font-weight:600;}
+  .sec-head h2{font-size:clamp(19px,3.4vw,24px);font-weight:700;}
+  .sec-note{margin-top:18px;max-width:62ch;color:var(--ink-2);}
+
+  /* 反転の装置 */
+  .flip{margin-top:20px;display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch;}
+  .flip .side{padding:14px 16px;border:1px solid var(--rule);background:var(--sheet);}
+  .flip .side .k{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3);display:block;margin-bottom:6px;}
+  .flip .side.was{color:var(--ink-2);}
+  .flip .side.now{border-color:var(--accent);}
+  .flip .side.now .k{color:var(--accent);}
+  .flip .pivot{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:20px;color:var(--accent);
+    display:flex;align-items:center;justify-content:center;}
+  .flip .side .v{font-size:14px;line-height:1.75;}
+  @media(max-width:640px){
+    .flip{grid-template-columns:1fr;}
+    .flip .pivot{transform:rotate(90deg);height:20px;}
+  }
+
+  .rec{border-bottom:1px solid var(--rule);padding-block:32px;}
+  .rec:first-of-type{border-top:1px solid var(--rule-hard);}
+  .rec-top{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap;}
+  .rec-no{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;font-weight:600;color:var(--ink-3);padding-top:4px;}
+  .rec-top h3{font-size:clamp(18px,3vw,22px);font-weight:700;flex:1 1 16ch;}
+  .tag{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.1em;
+    color:var(--accent);background:var(--accent-soft);padding:3px 9px;align-self:center;}
+  .rec-why{margin-top:14px;max-width:62ch;color:var(--ink-2);}
+  .fields{margin-top:18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 34px;}
+  @media(max-width:720px){.fields{grid-template-columns:1fr;}}
+  .f{display:flex;flex-direction:column;gap:4px;}
+  .f .k{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3);}
+  .f .v{font-size:14px;line-height:1.8;}
+  .f.money .v{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:13.5px;}
+  .f.risk .k{color:var(--flag);}
+  .f.risk .v{border-left:2px solid var(--flag);padding-left:12px;background:var(--flag-soft);
+    padding-block:6px;padding-right:10px;}
+
+  .axis{margin-top:52px;}
+  .axis-label{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--flag);}
+  .axis h3{font-size:clamp(17px,3vw,21px);font-weight:700;margin-top:4px;}
+  .axis > p{margin-top:10px;max-width:62ch;color:var(--ink-2);font-size:14px;}
+
+  .caveat{margin-top:40px;border:1px solid var(--rule-hard);background:var(--sheet);
+    padding:22px 24px;font-size:13.5px;color:var(--ink-2);max-width:70ch;}
+  .caveat h4{font-size:14px;color:var(--ink);margin-bottom:8px;
+    font-family:"IBM Plex Mono",ui-monospace,monospace;letter-spacing:.08em;}
+  .caveat p + p{margin-top:10px;}
+  .closing{margin-top:40px;padding:26px 0 0;border-top:2px solid var(--ink);max-width:62ch;
+    font-family:"Zen Old Mincho",serif;font-size:16px;line-height:2;}
+  footer{margin-top:52px;padding-top:18px;border-top:1px solid var(--rule);
+    font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;color:var(--ink-3);letter-spacing:.08em;}
+</style>
+
+<div class="wrap">
+
+  <div class="eyebrow"><span>研究ノート補遺 II</span><span>2026.09.14</span><span>対外未提出・社内検討用</span></div>
+
+  <h1>十の反転</h1>
+  <p class="sub">支払者を替えても残った前提を、一つずつ裏返す</p>
+
+  <div class="lede">
+    <p>前の補遺では請求書の宛名だけを替えた。だが10案には、宛名を替えても手つかずの前提が4つ残っている。<strong>AIは競合である／人は雇うものである／技は今のうちに使うものである／AIは検知して排除するものである</strong>。この4つを裏返すと、10案の延長線上にない設計が出てくる。</p>
+    <p>水平思考でやるべきなのは新しい業種を足すことではなく、いま無意識に「そういうものだ」と置いている条件を一つずつ外して、同じ資源が別の値段で売れる場所を探すことだ。以下の10件は全部、資源（達人・学生・語り・記録）は前回と同じで、条件だけを外してある。</p>
+  </div>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">I</span><h2>AIを、競合から顧客に裏返す</h2></div>
+    <p class="sec-note">10案はすべて「AIが手を出せない領域」に立っていた。だが最も金を持っているのはAI側で、AI側が最も切実に欲しいのは、まさにその手を出せない領域の一次データだ。売り切ると自分の足場が消えるので、<b>貸す</b>。</p>
+
+    <div class="flip">
+      <div class="side was"><span class="k">これまでの前提</span><span class="v">AIは職人の仕事を奪う側。だから距離を取る。</span></div>
+      <div class="pivot">⇄</div>
+      <div class="side now"><span class="k">裏返すと</span><span class="v">AIは職人の記録を買う側。期限と用途を切って貸せば、毎年の収入になる。</span></div>
+    </div>
+
+    <article class="rec">
+      <div class="rec-top"><span class="rec-no">L1</span><h3>暗黙知ライセンス</h3><span class="tag">売らずに貸す</span></div>
+      <p class="rec-why">職人の手元、方言の語り、現場の段取り。学習用の一次データとして単発で売り切るのではなく、用途限定・期限付き・更新制で貸す。生成物への使用は別料金にし、途中で降りる権利を作り手側に残す。売り切りと貸しでは、同じ素材でも生涯収入が桁で変わる。作り手の取り分を先に決め、契約書のひな型ごと持つのが商品。</p>
+      <div class="fields">
+        <div class="f"><span class="k">支払者</span><span class="v">AI開発企業、データ調達を担うベンダー、産業用ロボット・自動化企業</span></div>
+        <div class="f"><span class="k">予算科目</span><span class="v">データ調達費 / 研究開発費（新規稟議でなく既存の調達枠）</span></div>
+        <div class="f money"><span class="k">単価仮説</span><span class="v">1素材群あたり年額ライセンス。作り手7：運営3で分配。</span></div>
+        <div class="f"><span class="k">フェーズ0（1件）</span><span class="v">1産地・1職人の作業記録を1本作り、契約書ごと1社に提示して、貸しの条件が通るか見る。</span></div>
+        <div class="f risk"><span class="k">最大のリスク</span><span class="v">作り手が「AIに渡した人」と見なされ、産地での信用を失う。契約より先に、産地の合意形成が要る。</span></div>
+      </div>
+    </article>
+
+    <article class="rec">
+      <div class="rec-top"><span class="rec-no">L2</span><h3>技能伝承の代替としての身体記録</h3><span class="tag">AI不在でなくAI経由</span></div>
+      <p class="rec-why">建設・製造の熟練工不足は、有効求人倍率の裏返しとして人を採る話にされがちだが、大手はすでに「採れない前提」で技能伝承に投資している。熟練者の動きを記録し、訓練用の教材・治具・シミュレータに変換する。AIを排除する事業ではなく、AIに人間の型を教える事業。身体性の価値は、ここでは最も高く売れる。</p>
+      <div class="fields">
+        <div class="f"><span class="k">支払者</span><span class="v">ゼネコン・自動車・設備メーカーの人材開発／生産技術部門</span></div>
+        <div class="f"><span class="k">予算科目</span><span class="v">技能伝承・生産技術投資（設備投資の枠で通る＝研修費より桁が上）</span></div>
+        <div class="f money"><span class="k">単価仮説</span><span class="v">1工程あたりの記録・教材化で数百万円規模／年。</span></div>
+        <div class="f"><span class="k">フェーズ0（1件）</span><span class="v">1社の1工程だけ、引退間近の1人を撮って教材1本を納める。</span></div>
+        <div class="f risk"><span class="k">最大のリスク</span><span class="v">記録しても現場が見ない。教材の完成でなく、新人の習熟日数で検収条件を書く。</span></div>
+      </div>
+    </article>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">II</span><h2>人を、雇うものから借りるものに裏返す</h2></div>
+    <p class="sec-note">05と06は「人を集められるか」で詰まる。だが日本でいま最も大量に余っている労働力は、失業者ではなく<b>企業の中に滞留している人</b>だ。企業は彼らを外に出すことに、すでに予算を付けている。</p>
+
+    <div class="flip">
+      <div class="side was"><span class="k">これまでの前提</span><span class="v">供給者（達人・同行スタッフ）は、こちらが探して雇う。人件費は原価。</span></div>
+      <div class="pivot">⇄</div>
+      <div class="side now"><span class="k">裏返すと</span><span class="v">人を出す側に予算がある。人件費を原価でなく、売上として受け取る。</span></div>
+    </div>
+
+    <article class="rec">
+      <div class="rec-top"><span class="rec-no">L3</span><h3>出向・セカンドキャリアの受け皿</h3><span class="tag">原価が売上に変わる</span></div>
+      <p class="rec-why">AI導入で職務が消えた50代を、企業は解雇できないので出向・副業・セカンドキャリア支援に出す。その支援には既に予算が付いている。彼らを地域の現場や中小企業の伴走役として受け入れ、<b>送り出す企業から</b>受入費を取る。熟練者レンタル（01）の供給問題と、支払者の問題を一度に解く。</p>
+      <div class="fields">
+        <div class="f"><span class="k">支払者</span><span class="v">大企業の人事（出向・セカンドキャリア支援）、人材サービス会社</span></div>
+        <div class="f"><span class="k">予算科目</span><span class="v">出向支援費 / セカンドキャリア支援費 / 雇用調整の付随費</span></div>
+        <div class="f money"><span class="k">単価仮説</span><span class="v">1人あたり受入・伴走で月額。受入先の中小企業からは取らない。</span></div>
+        <div class="f"><span class="k">フェーズ0（1件）</span><span class="v">1社から1人を6ヶ月受け入れ、送り出し元に請求書を通す。</span></div>
+        <div class="f risk"><span class="k">最大のリスク</span><span class="v">「厄介払いの置き場」として使われる。受入前に本人の面談拒否権を設計に入れる。</span></div>
+      </div>
+    </article>
+
+    <article class="rec">
+      <div class="rec-top"><span class="rec-no">L4</span><h3>同行スタッフを採用費で回す</h3><span class="tag">人件費を採用マーケに載せ替える</span></div>
+      <p class="rec-why">05の学生同行スタッフの時給は原価として重い。だが企業の新卒採用単価は1人あたり百万円規模で、しかも接点づくりに困っている。学生が高齢者の家に通う体験を、参加企業の採用接点として設計すれば、人件費の一部を採用予算が負担する。学生にとっては報酬と就職接点、企業にとっては広告より深い接触、高齢者にとっては来訪。</p>
+      <div class="fields">
+        <div class="f"><span class="k">支払者</span><span class="v">新卒採用に苦戦する企業の採用部門</span></div>
+        <div class="f"><span class="k">予算科目</span><span class="v">新卒採用費 / 採用広報費</span></div>
+        <div class="f money"><span class="k">単価仮説</span><span class="v">協賛1社あたり年額。採用1人分の単価を下回る額に抑える。</span></div>
+        <div class="f"><span class="k">フェーズ0（1件）</span><span class="v">1社の協賛で学生5人・3ヶ月。エントリーに繋がった数を数える。</span></div>
+        <div class="f risk"><span class="k">最大のリスク</span><span class="v">高齢者が採用イベントの背景にされる。訪問先に企業名を出さない線引きを先に決める。</span></div>
+      </div>
+    </article>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">III</span><h2>技を、使うものから消える資産に裏返す</h2></div>
+    <p class="sec-note">達人の供給は毎年減る。減る資産は、減るという事実そのものが値段になる。今は買わない人も、5年後には買えない。</p>
+
+    <div class="flip">
+      <div class="side was"><span class="k">これまでの前提</span><span class="v">技は体験として、今その場で消費するもの。</span></div>
+      <div class="pivot">⇄</div>
+      <div class="side now"><span class="k">裏返すと</span><span class="v">技は在庫が減り続ける資産。記録は、買い手の将来のブランド資産になる。</span></div>
+    </div>
+
+    <article class="rec">
+      <div class="rec-top"><span class="rec-no">L5</span><h3>周年事業の前倒し記録</h3><span class="tag">期限のある資産</span></div>
+      <p class="rec-why">老舗・オーナー企業の周年事業は、その年になってから素材を探し、当事者がもういないことに気づく。5年前に撮っておく提案を、周年の5年前に持っていく。企業側は無形資産として社史・ブランド資料に計上でき、こちらは撮影時点で収入になる。「まだ早い」と言われたら、創業家の最年長者の年齢を一緒に数えるだけでいい。</p>
+      <div class="fields">
+        <div class="f"><span class="k">支払者</span><span class="v">創業50年・100年が近いオーナー企業、老舗の資産管理会社</span></div>
+        <div class="f"><span class="k">予算科目</span><span class="v">社史・周年事業費（前倒し計上） / ブランド資産</span></div>
+        <div class="f money"><span class="k">単価仮説</span><span class="v">初年度の記録一式＋年次更新の保管・追撮契約。</span></div>
+        <div class="f"><span class="k">フェーズ0（1件）</span><span class="v">周年まで5年ある企業1社に、創業家の語りを1本だけ撮って納める。</span></div>
+        <div class="f risk"><span class="k">最大のリスク</span><span class="v">周年の担当者が決まっておらず、稟議の持ち主がいない。窓口は広報でなく、創業家本人に当たる。</span></div>
+      </div>
+    </article>
+
+    <article class="rec">
+      <div class="rec-top"><span class="rec-no">L6</span><h3>相続前の語りの記録</h3><span class="tag">金融のリテンション</span></div>
+      <p class="rec-why">相続のタイミングは、金融機関にとって資産が他社へ流出する最大の危機で、そこには顧客維持の予算が厚く付いている。資産の話ではなく、本人の語りを記録する役として入る。遺言でも終活でもなく、聴き書き。金融機関は関係の継続を買い、家族は複製できない記録を受け取る。青森での聴き書きの実践が、そのまま商品になる数少ない一件。</p>
+      <div class="fields">
+        <div class="f"><span class="k">支払者</span><span class="v">信託銀行・証券・保険の富裕層担当、税理士法人の資産税部門</span></div>
+        <div class="f"><span class="k">予算科目</span><span class="v">顧客維持費 / 富裕層向け付帯サービス</span></div>
+        <div class="f money"><span class="k">単価仮説</span><span class="v">1家族あたりの聴き書き＋製本。金融機関が全額または一部を負担。</span></div>
+        <div class="f"><span class="k">フェーズ0（1件）</span><span class="v">1行1担当者の顧客1家族で実施し、担当者が次の顧客に自発的に紹介するか見る。</span></div>
+        <div class="f risk"><span class="k">最大のリスク</span><span class="v">営業の道具として扱われ、語りの場が壊れる。金融機関の同席を不可にする。</span></div>
+      </div>
+    </article>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">IV</span><h2>AI検知を、排除から標準に裏返す</h2></div>
+    <p class="sec-note">02と08は「AIが混ざっていないことを検知する」側に立っている。検知は原理的に追いかけっこで、勝ち続けることはできない。勝てるのは、検知でなく<b>過程を残す形式</b>を先に配ってしまうほうだ。そして市場は、AIを禁止したい側より、AIを使いながら説明責任を果たしたい側のほうが桁で広い。</p>
+
+    <div class="flip">
+      <div class="side was"><span class="k">これまでの前提</span><span class="v">AIが混ざっているかを、後から見抜いて排除する。</span></div>
+      <div class="pivot">⇄</div>
+      <div class="side now"><span class="k">裏返すと</span><span class="v">過程を残す形式を無料で配り、それを読む側と、事故を引き受ける側から取る。</span></div>
+    </div>
+
+    <article class="rec">
+      <div class="rec-top"><span class="rec-no">L7</span><h3>制作過程の標準形式</h3><span class="tag">配って、読む側から取る</span></div>
+      <p class="rec-why">下書き・改稿・音声メモをまとめて提出する形式を、作り手には無料で配る。作り手が増えるほど、それを読んで検収する側（広告主・出版社・プラットフォーム）にとって標準になる。金は読む側から取り、運営は業界団体の会費に載せる。検知技術で競わず、提出様式の側を押さえる。</p>
+      <div class="fields">
+        <div class="f"><span class="k">支払者</span><span class="v">業界団体・プラットフォーム運営、検収する側の事業会社</span></div>
+        <div class="f"><span class="k">予算科目</span><span class="v">団体会費 / 品質管理・検収費</span></div>
+        <div class="f money"><span class="k">単価仮説</span><span class="v">形式の配布は無料。検収側の閲覧・照会に従量課金、団体からは年会費。</span></div>
+        <div class="f"><span class="k">フェーズ0（1件）</span><span class="v">作り手20人に形式を配り、検収側1社が「この形式で出してくれ」と発注条件に書くかを見る。</span></div>
+        <div class="f risk"><span class="k">最大のリスク</span><span class="v">大手プラットフォームが同じ様式を無償で出す。標準化は速度勝負になる。</span></div>
+      </div>
+    </article>
+
+    <article class="rec">
+      <div class="rec-top"><span class="rec-no">L8</span><h3>AI使用の開示設計</h3><span class="tag">逆張りの、さらに逆</span></div>
+      <p class="rec-why">AI-Freeを掲げられる事業者はごく一部で、大半はAIを使うのをやめられない。やめられない側に必要なのは、どこまで使ったかを説明できる線引きと、その開示文面だ。08の顧客が10社だとすれば、こちらは1,000社いる。08と同じ証跡の仕組みを使い、出口だけを「無使用の保証」から「使用の適正開示」に変える。</p>
+      <div class="fields">
+        <div class="f"><span class="k">支払者</span><span class="v">制作会社・広告代理店・事業会社の広報／法務</span></div>
+        <div class="f"><span class="k">予算科目</span><span class="v">ブランド管理費 / 法務・コンプライアンス費</span></div>
+        <div class="f money"><span class="k">単価仮説</span><span class="v">開示基準の策定を一括、以降は運用の年間顧問。</span></div>
+        <div class="f"><span class="k">フェーズ0（1件）</span><span class="v">制作会社1社の開示ルールを作り、実案件1本で運用して修正する。</span></div>
+        <div class="f risk"><span class="k">最大のリスク</span><span class="v">「AI-Free」を売る08と、同じ看板では両立しない。会社名または担当を分ける必要がある。</span></div>
+      </div>
+    </article>
+
+    <article class="rec">
+      <div class="rec-top"><span class="rec-no">L9</span><h3>混入事故の引受</h3><span class="tag">認証でなく保険</span></div>
+      <p class="rec-why">02は「大丈夫だと言う」事業だが、買い手が本当に欲しいのは「外れたときに誰が払うか」だ。検査を保険商品の引受条件として設計し、損保と組んで代理店手数料を取る。認証料は1案件数万円だが、保険は契約が続くかぎり毎年立つ。検査の精度が上がるほど損害率が下がり、取り分が増える構造でもある。</p>
+      <div class="fields">
+        <div class="f"><span class="k">支払者</span><span class="v">損害保険会社（引受）、保険料を払う広告主・制作会社</span></div>
+        <div class="f"><span class="k">予算科目</span><span class="v">保険料 / 賠償リスク管理</span></div>
+        <div class="f money"><span class="k">単価仮説</span><span class="v">保険料に対する代理店手数料＋引受審査（検査）の受託料。</span></div>
+        <div class="f"><span class="k">フェーズ0（1件）</span><span class="v">損保1社の担当に、02の検査報告書1枚を持ち込み、引受条件になり得るか判定をもらう。</span></div>
+        <div class="f risk"><span class="k">最大のリスク</span><span class="v">保険は規制産業で、単独では商品を作れない。パートナーが見つからなければ、この案は成立しない。</span></div>
+      </div>
+    </article>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-no">V</span><h2>市場を、国内から外に裏返す</h2></div>
+    <p class="sec-note">同じ体験でも、買う人が国内か国外かで単価が5倍変わる。稀少性は相対的で、青森の語りは青森では無料だ。</p>
+
+    <article class="rec">
+      <div class="rec-top"><span class="rec-no">L10</span><h3>海外富裕層・海外ブランド向けの一次接触</h3><span class="tag">同じ在庫、別の値札</span></div>
+      <p class="rec-why">01の熟練者レンタルと06の弟子入りを、国内の観光でなく、海外の富裕層旅行手配会社（旅行代理店でなく個人付きの手配業者）と、日本の手仕事を探しているラグジュアリーブランドに直接売る。彼らは「予約できないもの」に金を払い、値切らない。必要なのは英語の提案書1通と、確実に当日成立する現地の段取り。日本語の観光商品を作り込む前に、こちらを試すほうが速い。</p>
+      <div class="fields">
+        <div class="f"><span class="k">支払者</span><span class="v">海外の富裕層向け手配会社、海外ラグジュアリーブランドの調達・体験部門</span></div>
+        <div class="f"><span class="k">予算科目</span><span class="v">顧客体験費 / 商品調達費（為替がこちらに有利に働く）</span></div>
+        <div class="f money"><span class="k">単価仮説</span><span class="v">同一内容で国内価格の3〜5倍。手配会社経由の取次手数料。</span></div>
+        <div class="f"><span class="k">フェーズ0（1件）</span><span class="v">手配会社1社に英文1枚を送り、1組だけ受け入れて当日を完遂する。</span></div>
+        <div class="f risk"><span class="k">最大のリスク</span><span class="v">当日の通訳と段取りが崩れると、二度と紹介が来ない。1組目は自分が全日程に立ち会う。</span></div>
+      </div>
+    </article>
+  </section>
+
+  <div class="caveat">
+    <h4>矛盾の扱い</h4>
+    <p>L1・L2は「AIには代われない」を掲げながらAI企業に素材を貸す。L8は「人が書いた保証」を売りながらAI使用の開示を売る。どちらも看板としては両立しない。両立させる条件は3つに絞れる。<b>①売り切らない</b>（期限・用途・更新制、作り手の撤回権）、<b>②作り手の取り分を先に決める</b>（分配率を契約前に開示）、<b>③看板を分ける</b>（AI-Free側と開示設計側を同一名義で並べない）。この3つを守れないなら、その案は取らない。</p>
+    <p>順番についても一つ。10案すべてを同時に試すことはできない。支払者への距離が最も短いのは<b>L3・L6・L10</b>で、いずれも先方に既存の予算科目があり、フェーズ0が1件・1人で完結する。L7・L9は相手が制度側（業界団体・損保）なので、時間軸が年単位になる。</p>
+  </div>
+
+  <div class="caveat">
+    <h4>数字の扱いについて</h4>
+    <p>本ノートに一次ソース付きの数値は一つも置いていない。単価・料率・分配率はすべて設計上の仮説で、検証はフェーズ0の請求書でしか行えない。事実として使えるのは08.26ノートの引用値のみ。対外資料では必ず分けて書くこと。</p>
+  </div>
+
+  <p class="closing">10案を替え、支払者を替え、前提を裏返しても、変わらないものが一つある。1件目は手でやり、請求書が通ったかどうかだけを見る、という順番だ。ここに並んだ十の反転も、頭の中で最も筋がよく見える案からではなく、来週いちばん早く1件目に会える案から始めるほうがいい。</p>
+
+  <footer>研究ノート補遺 II / 2026.09.14 / 08.26「AIが速くなるほど、人間は遅い場所で稼ぐ」・補遺「誰が請求書を受け取るのか」より継続</footer>
+</div>
